@@ -1,45 +1,57 @@
 # -*- coding: utf-8 -*-
+db.define_table('PERIODOS_ABERTOS_AVAL',
+                Field('ANO_EXERCICIO', 'integer'),
+                Field('DT_INICIO', 'datetime'),
+                Field('DT_FIM', 'datetime'),
+                primarykey=['ANO_EXERCICIO']
+)
 
-#########################################################################
-## This scaffolding model makes your app work on Google App Engine too
-## File is released under public domain and you can use without limitations
-#########################################################################
-
-## if SSL/HTTPS is properly configured and you want all HTTP requests to
-## be redirected to HTTPS, uncomment the line below:
-# request.requires_https()
-
-if not request.env.web2py_runtime_gae:
-    ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'])
-else:
-    ## connect to Google BigTable (optional 'google:datastore://namespace')
-    db = DAL('google:datastore+ndb')
-    ## store sessions and tickets there
-    session.connect(request, response, db=db)
-    ## or store session in Memcache, Redis, etc.
-    ## from gluon.contrib.memdb import MEMDB
-    ## from google.appengine.api.memcache import Client
-    ## session.connect(request, response, db = MEMDB(Client()))
-
-## by default give a view/generic.extension to all actions from localhost
-## none otherwise. a pattern can be 'controller/function.extension'
-response.generic_patterns = ['*'] if request.is_local else []
-
-## (optional) optimize handling of static files
-# response.optimize_css = 'concat,minify,inline'
-# response.optimize_js = 'concat,minify,inline'
-## (optional) static assets folder versioning
-# response.static_version = '0.0.0'
-#########################################################################
-## Here is sample code if you need for
-## - email capabilities
-## - authentication (registration, login, logout, ... )
-## - authorization (role based authorization)
-## - services (xml, csv, json, xmlrpc, jsonrpc, amf, rss)
-## - old style crud actions
-## (more options discussed in gluon/tools.py)
-#########################################################################
+db.define_table('AVAL_ANEXO_1',
+                Field('NOTA_FINAL', 'float', readable=True, writable=True),
+                Field('DATA_DOCUMENTO', 'date', readable=True, required=True, writable=True, notnull=True),
+                Field('ANO_EXERCICIO', db.PERIODOS_ABERTOS_AVAL),
+                Field('SIAPE_CHEFIA', 'integer', readable=True, notnull=True),
+                Field('CIENTE_CHEFIA', 'string', length=1, writable=True, readable=True, default='F'),
+                Field('SUGESTOES_CHEFIA', 'string', length=4096, writable=True, readable=True),
+                Field('INFO_COMPLEMENTAR_CHEFIA', 'string', length=4096, writable=True, readable=True),
+                Field('NOTA_ASSIDUIDADE_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_COMPROMISSO_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_CONHECIMENTO_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_DESENVOLVIMENTO_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_INICIATIVA_CHEFIA', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_ORGANIZACAO_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_PRODUTIVIDADE_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_RESPONSABILIDADE_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('NOTA_RELACIONAMENTO_CHEFIA', 'integer', required=False, requires=True, writable=True,
+                      readable=True),
+                Field('SIAPE_SERVIDOR', 'integer', notnull=True),
+                Field('CIENTE_SERVIDOR', 'string', length=1, writable=True, readable=True, default='F'),
+                Field('SUGESTOES_SERVIDOR', 'string', length=4096, writable=True, readable=True),
+                Field('INFO_COMPLEMENTAR_SERVIDOR', 'string', length=4096, writable=True, readable=True),
+                Field('NOTA_ASSIDUIDADE', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_COMPROMISSO', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_CONHECIMENTO', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_DESENVOLVIMENTO', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_INICIATIVA', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_ORGANIZACAO', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_PRODUTIVIDADE', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_RESPONSABILIDADE', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('NOTA_RELACIONAMENTO', 'integer', required=False, requires=True, writable=True, readable=True),
+                Field('FATOR_ILUMINACAO', 'string', length=1),
+                Field('FATOR_TEMPERATURA', 'string', length=1),
+                Field('FATOR_RUIDOS', 'string', length=1),
+                Field('FATOR_INSTALACOES', 'string', length=1),
+                Field('FATOR_EQUIPAMENTOS', 'string', length=1),
+                Field('INFO_COMPLEMENTARES', 'string', length=4096),
+                primarykey=['ANO_EXERCICIO', 'SIAPE_SERVIDOR']
+)
 
 from gluon.tools import Auth, Service, PluginManager
 
@@ -47,7 +59,7 @@ auth = Auth(db)
 service = Service()
 plugins = PluginManager()
 
-## create all tables needed by auth if not custom tables
+# # create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
 
 ## configure email
@@ -64,6 +76,7 @@ auth.settings.reset_password_requires_verification = True
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.janrain_account import use_janrain
+
 use_janrain(auth, filename='private/janrain.key')
 
 #########################################################################
