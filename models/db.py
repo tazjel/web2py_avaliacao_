@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 db.define_table('PERIODOS_ABERTOS_AVAL',
                 Field('ANO_EXERCICIO', 'integer'),
-                Field('DT_INICIO', 'datetime'),
-                Field('DT_FIM', 'datetime'),
                 primarykey=['ANO_EXERCICIO']
 )
 
@@ -60,41 +58,28 @@ service = Service()
 plugins = PluginManager()
 
 # # create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
+auth.define_tables(username=True)
+auth.settings.create_user_groups = False
 
-## configure email
+# # configure email
 mail = auth.settings.mailer
 mail.settings.server = 'logging' if request.is_local else 'smtp.gmail.com:587'
 mail.settings.sender = 'you@gmail.com'
 mail.settings.login = 'username:password'
 
 ## configure auth policy
-auth.settings.registration_requires_verification = False
-auth.settings.registration_requires_approval = False
-auth.settings.reset_password_requires_verification = True
+auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
+db.auth_user.username.label = 'CPF'
+
+from Servidor import Servidor
+
+auth.settings.login_onaccept = Servidor().getDadosToSession()
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.janrain_account import use_janrain
 
 use_janrain(auth, filename='private/janrain.key')
-
-#########################################################################
-## Define your tables below (or better in another model file) for example
-##
-## >>> db.define_table('mytable',Field('myfield','string'))
-##
-## Fields can be 'string','text','password','integer','double','boolean'
-##       'date','time','datetime','blob','upload', 'reference TABLENAME'
-## There is an implicit 'id integer autoincrement' field
-## Consult manual for more options, validators, etc.
-##
-## More API examples for controllers:
-##
-## >>> db.mytable.insert(myfield='value')
-## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
-## >>> for row in rows: print row.id, row.myfield
-#########################################################################
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
