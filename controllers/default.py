@@ -1,9 +1,36 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+from datetime import date
+from Avaliacao import Avaliacao
+from gluon.html import OPTION
+
 
 @auth.requires_login()
 def index():
+    avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
 
-    return dict()
+    form = FORM(
+        LABEL('Exercício: ', _for='ANO_EXERCICIO'),
+        SELECT([OPTION(ano.ANO_EXERCICIO, _value=ano.ANO_EXERCICIO) for ano in avaliacao.anosDeExercicio()],
+               _name='ANO_EXERCICIO'),
+        LABEL('Tipo: ', _for='avaliacaoTipo'),
+        SELECT([OPTION(v, _value=k) for k, v in avaliacao.tiposDeAvaliacaoesForCurrentSession().iteritems()],
+               _name='avaliacaoTipo',
+               _class='avaliacaoTipo',
+               _value='autoavaliacao'),
+        INPUT(_value='Próximo', _type='submit')
+    )
+
+    if form.process().accepted:
+        session.ANO_EXERCICIO = form.vars.ANO_EXERCICIO
+        session.avaliacaoTipo = form.vars.avaliacaoTipo
+
+        if form.vars.avaliacaoTipo == 'autoavaliacao':
+            redirect(URL('anexo1','index'))
+
+        elif form.vars.avaliacaoTipo == 'subordinados':
+            redirect(URL('anexo1','subordinados'))
+
+    return dict(form=form)
 
 
 def user():
@@ -32,25 +59,3 @@ def download():
     """
     return response.download(request, db)
 
-
-def call():
-    """
-    exposes services. for example:
-    http://..../[app]/default/call/jsonrpc
-    decorate with @services.jsonrpc the functions to expose
-    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
-    """
-    return service()
-
-
-@auth.requires_login() 
-def api():
-    """
-    this is example of API with access control
-    WEB2PY provides Hypermedia API (Collection+JSON) Experimental
-    """
-    from gluon.contrib.hypermedia import Collection
-    rules = {
-        '<tablename>': {'GET':{},'POST':{},'PUT':{},'DELETE':{}},
-        }
-    return Collection(db).process(request,response,rules)

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from gluon import current
+
+
 db.define_table('PERIODOS_ABERTOS_AVAL',
                 Field('ANO_EXERCICIO', 'integer'),
                 primarykey=['ANO_EXERCICIO']
@@ -51,6 +54,8 @@ db.define_table('AVAL_ANEXO_1',
                 primarykey=['ANO_EXERCICIO', 'SIAPE_SERVIDOR']
 )
 
+current.db = db
+
 from gluon.tools import Auth, Service, PluginManager
 
 auth = Auth(db)
@@ -74,12 +79,3 @@ db.auth_user.username.label = 'CPF'
 from Servidor import Servidor
 
 auth.settings.login_onaccept = Servidor().getDadosToSession()
-
-## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
-## register with janrain.com, write your domain:api_key in private/janrain.key
-from gluon.contrib.login_methods.janrain_account import use_janrain
-
-use_janrain(auth, filename='private/janrain.key')
-
-## after defining tables, uncomment below to enable auditing
-# auth.enable_record_versioning(db)

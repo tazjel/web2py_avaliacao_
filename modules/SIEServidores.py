@@ -14,6 +14,7 @@ class SIEChefiasImediatas(object):
         mais informações em http://sistemas.unirio.br/api/default/index#table_V_CHEFIAS_IMEDIATAS
 
         :param CPF: O CPF do servidor a ser buscado, sem máscara
+        :type CPF: str
         :rtype : dict
         """
         params = {"CPF_SERVIDOR": CPF}
@@ -34,13 +35,16 @@ class SIESubordinados(object):
         Mais informações em http://sistemas.unirio.br/api/default/index#table_V_SUBORDINADOS
 
         :param CPF: O CPF do servidor com chefia a ser buscado, sem máscara
+        :type CPF: str
         :return: Uma lista de dicionários de subordinados
         :rtype : list
         """
         params = {"CPF_CHEFIA": CPF,
                   "LMIN": self.lmin,
                   "LMAX": self.lmax}
-
-        subordinados = self.apiRequest.performGETRequest(self.path, params)
-        return subordinados.content
+        try:
+            subordinados = self.apiRequest.performGETRequest(self.path, params)
+            return subordinados.content
+        except Exception:
+            pass
 
