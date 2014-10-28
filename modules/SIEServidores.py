@@ -42,6 +42,7 @@ class SIESubordinados(object):
         params = {"CPF_CHEFIA": CPF,
                   "LMIN": self.lmin,
                   "LMAX": self.lmax}
+
         try:
             subordinados = self.apiRequest.performGETRequest(self.path, params)
             return subordinados.content

@@ -32,10 +32,10 @@ class Avaliacao(object):
         """
         if current.session.avaliacao:
             if current.session.avaliacaoTipo == 'autoavaliacao':
-                if current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
+                if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
                     return True
             elif current.session.avaliacaoTipo == 'subordinados':
-                if current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
+                if 'CIENTE_CHEFIA' in current.session.avaliacao  and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
                     return True
 
     def isChefiaCiente(self):

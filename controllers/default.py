@@ -25,13 +25,12 @@ def index():
         session.avaliacaoTipo = form.vars.avaliacaoTipo
 
         if form.vars.avaliacaoTipo == 'autoavaliacao':
-            redirect(URL('anexo1','index'))
+            redirect(URL('anexo1', 'index'))
 
         elif form.vars.avaliacaoTipo == 'subordinados':
-            redirect(URL('anexo1','subordinados'))
+            redirect(URL('subordinados', 'index'))
 
     return dict(form=form)
-
 
 def user():
     """

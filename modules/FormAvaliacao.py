@@ -9,7 +9,6 @@ class FormAvaliacao(object):
     def __init__(self):
         self.servidor = current.session.dadosServidor
         # TODO Por causa de um UnicodeEncodeError, foi necessário colocar essa gambi. Resolver ou utilizar DBSM.REMOVEACENTOS na View
-        self.servidor["NOME_SERVIDOR"] = "DIOOOOOGO TESTE"
         self.tipo = current.session.avaliacaoTipo
 
     @property
@@ -60,7 +59,7 @@ class FormAvaliacao(object):
         :param column: Nome de uma
         :return: inteiro relativo a nota requisitada
         """
-        if current.session.avaliacao and column in current.session.avaliacao:
+        if current.session.avaliacao and column in current.session.avaliacao and current.session.avaliacao[column]:
             return int(current.session.avaliacao[column])
 
     def contentForColumn(self, column):
@@ -69,10 +68,8 @@ class FormAvaliacao(object):
         :param column:
         :return:
         """
-        if current.session.avaliacao and column in current.session.avaliacao:
+        if current.session.avaliacao and column in current.session.avaliacao and current.session.avaliacao[column]:
             return current.session.avaliacao[column]
-        else:
-            return ""
 
     def columnNeedChefia(self, column):
         """
@@ -96,14 +93,14 @@ class FormAvaliacao(object):
         :param column: uma coluna do banco AVAL_ANEXO_1
         :return:
         """
-        if self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'autoavaliacao':
+        if self.columnNeedChefia(column) and self.tipo == 'autoavaliacao':
             return True
-        elif not self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'subordinados':
+        elif not self.columnNeedChefia(column) and self.tipo == 'subordinados':
             return True
-        elif not self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'autoavaliacao':
+        elif not self.columnNeedChefia(column) and self.tipo == 'autoavaliacao':
             if 'CIENTE_SERVIDOR' in current.session.avaliacao:
                 return True
-        elif self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'subordinados':
+        elif self.columnNeedChefia(column) and self.tipo == 'subordinados':
             if 'CIENTE_CHEFIA' in current.session.avaliacao:
                 return True
 
@@ -145,9 +142,9 @@ class FormAvaliacao(object):
 
         :rtype : gluon.html.DIV
         """
-        if current.session.avaliacaoTipo == 'subordinados':
+        if self.tipo == 'subordinados':
             column = 'CIENTE_CHEFIA'
-        elif current.session.avaliacaoTipo == 'autoavaliacao':
+        elif self.tipo == 'autoavaliacao':
             column = 'CIENTE_SERVIDOR'
 
         if not Avaliacao.isCiente():
