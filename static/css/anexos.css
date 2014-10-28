@@ -1,0 +1,136 @@
+div.flash{
+	top:100px;
+}
+
+#form-header{
+	border:1px solid #cccccc;
+	padding:5px 5px 5px 5px;
+	text-align: center; 
+	display: block;
+	clear: both;
+	width: 100%;
+	float: left;
+	margin-bottom: 15px;
+}
+
+.dadosServidor input{
+	width:70%;
+}
+.left-h, .right-h{
+	float:left;
+	width:49%;
+	font-family: Arial;
+}
+
+.left-h{
+	border-right: 1px solid #cccccc; 
+}
+
+.right-h .line1{
+	font-size: 26pt;
+	display:block;
+	margin-top: 20px
+}
+.right-h .line2{
+	font-size: 16pt
+}
+
+h1{
+	text-align: center;
+	font-size: 11pt;
+	text-transform: uppercase;
+}
+
+.aviso{
+	width:100%;
+	clear:both;
+	float:left;
+	display: block;
+	background-color:#999;
+	padding:5px;
+	color:#ffffff;
+	font-weight: bold;
+	text-align: center;
+}
+
+table.greyTable, table.greyTableSmall{
+	border:1px solid #000000;
+	margin: 0px auto;
+}
+
+table.greyTable .cellTitle, table.greyTableSmall .cellTitle{
+	font-weight: bold;
+	text-transform: uppercase;
+	display: block;
+	font-size: 9pt;
+}
+
+table.greyTable .tableHeader, table.greyTableSmall .tableHeader{
+	background-color: #ccc;
+	font-weight: bold;
+	font-size: 9pt;
+}
+
+table.greyTable tr{
+	border:2px solid #000000;
+	vertical-align: middle;
+}
+
+table.greyTable td{
+	border:2px solid #000000;	
+	vertical-align: middle;
+	text-align: center;
+}
+
+table.greyTableSmall td{
+	vertical-align: middle;
+	text-align: center;
+}
+
+table.greyTable .tableFooter, table.greyTableSmall .tableFooter{
+	background-color:#d0d0d0;
+	font-weight: bold;
+}
+
+.centered{
+	width: 100%;
+	margin:0px auto;
+	display: block;
+	clear: both;
+	text-align: center;
+}
+
+select.notaSelect{
+	width:auto;
+}
+
+input.notaField{
+	width:30px;
+	text-align: center;
+}
+
+input.notaField[readonly="readonly"]{
+	background-color:#d0d0d0;
+	font-weight: bold
+}
+
+textarea{
+	width:90%;
+	padding:5px;
+	font-size:11pt;
+}
+
+textarea[readonly="readonly"]{
+    background-color:#f0f0f0;
+    color:#777;
+   }
+
+.ppf{
+	background-color:#d0d0d0;
+	font-weight: bold;
+	padding:2px 10px;
+ }
+
+ .alerta{
+ 	font-size: 9pt
+ }

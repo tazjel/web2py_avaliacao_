@@ -65,5 +65,6 @@ class Avaliacao(object):
 
     @property
     def dados(self):
-        return current.db((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
-                          & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.siapeServidor)).select()
+        avaliacao = current.db((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
+                          & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.siapeServidor)).select().first()
+        return avaliacao if avaliacao else {}

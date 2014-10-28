@@ -24,7 +24,7 @@ class Servidor(object):
         buscam-se os dados do servidor e de suas chefias imediatas, utilizando o CPF.
 
         """
-        if current.session.auth:
+        if current.session.auth and not current.session.dadosServidor:
             current.session.dadosServidor = self.__dadosChefiaImediata
 
             if not current.session.dadosServidor:

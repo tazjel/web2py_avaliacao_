@@ -27,13 +27,32 @@ def index():
 
 @auth.requires_login()
 def pagina2():
+    if not session.avaliacao:
+        avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
+        session.avaliacao = avaliacao.dados
+
     form = FormAvaliacao().formPagina2
-    form.add_button('Voltar', URL('anexo2','index'))
+    form.add_button('Voltar', URL('anexo2', 'index'))
 
     if form.process().accepted:
         session.avaliacao.update(form.vars)
 
+    return dict(form=form)
+
 
 @auth.requires_login()
 def pagina3():
-    pass
+    if not session.avaliacao:
+        avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
+        session.avaliacao = avaliacao.dados
+
+    form = FormAvaliacao().formPagina3
+    form.add_button('Voltar', URL('anexo1', 'pagina2'))
+    form.add_button('Primeira Página', URL('anexo2', 'index'))
+
+    if form.process().accepted:
+        session.avaliacao.update(form.vars)
+        response.flash = "Formulário salvo com sucesso."
+
+    return dict(form=form,
+                data=date.today())
