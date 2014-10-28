@@ -60,7 +60,7 @@ class FormAvaliacao(object):
         :param column: Nome de uma
         :return: inteiro relativo a nota requisitada
         """
-        if current.session.avaliacao and current.session.avaliacao[column]:
+        if current.session.avaliacao and column in current.session.avaliacao:
             return int(current.session.avaliacao[column])
 
     def contentForColumn(self, column):
@@ -69,7 +69,7 @@ class FormAvaliacao(object):
         :param column:
         :return:
         """
-        if current.session.avaliacao and current.session.avaliacao[column]:
+        if current.session.avaliacao and column in current.session.avaliacao:
             return current.session.avaliacao[column]
         else:
             return ""
@@ -89,6 +89,8 @@ class FormAvaliacao(object):
         Caso o tipo de avaliação seja uma Autoavaliação e a coluna seja do tipo CHEFIA,
         o campo deve ser readonly para a sessão em questão. O mesmo se aplica, caso o usuário
         em questão seja um chefe avaliando um subordinado.
+        Caso o campo deva ser preenchido pelo servidor da sessao mas o mesmo já finalizou a
+        sua avaliacao e deu o seu CIENTE, o campo deve ser apresentado como readonly
 
         :rtype : bool
         :param column: uma coluna do banco AVAL_ANEXO_1
@@ -98,6 +100,12 @@ class FormAvaliacao(object):
             return True
         elif not self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'subordinados':
             return True
+        elif not self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'autoavaliacao':
+            if 'CIENTE_SERVIDOR' in current.session.avaliacao:
+                return True
+        elif self.columnNeedChefia(column) and current.session.avaliacaoTipo == 'subordinados':
+            if 'CIENTE_CHEFIA' in current.session.avaliacao:
+                return True
 
     def printNotasSelectBox(self, column):
         """
@@ -113,7 +121,10 @@ class FormAvaliacao(object):
             return INPUT(_name=column, _value=self.notaForColumn(column), _type='text', _readonly=ON,
                          _class='notaField ')
         else:
-            return SELECT("", range(0, 11), _name=column, value=self.notaForColumn(column), _class='notaSelect ',
+            # TODO refazer forma como essa lista e opção está sendo criar por solução mais elegante
+            options = [""]
+            options.extend(range(0, 11))
+            return SELECT(options, _name=column, value=self.notaForColumn(column), _class='notaSelect ',
                           requires=IS_INT_IN_RANGE(0, 11, error_message='A nota deve ser um número entre 0 e 10'))
 
     def printTextarea(self, column):
@@ -165,12 +176,16 @@ class FormAvaliacao(object):
                 TR(
                     TD(
                         SPAN('1. Assiduidade/Pontualidade', _class='cellTitle'),
-                        SPAN('Comparecimento com regularidade e exatidão ao lugar onde tem de desempenhar suas tarefas em horário determinado')
+                        SPAN(
+                            'Comparecimento com regularidade e exatidão ao lugar onde tem de desempenhar suas tarefas em horário determinado')
                     ),
                     TD('Não registra faltas nem atrasos'),
-                    TD('Suas faltas, saídas antecipadas e/ou atrasos ocorrem de maneira justificada, dentro dos limites possíveis.'),
-                    TD('Suas faltas, saídas antecipadas e/ou atrasos as vezes ultrapassam os limites possíveis da Instituição,  às vezes injustificados.'),
-                    TD('Suas faltas, saídas antecipadas e/ou atrasos são injustificados ultrapassando os limites da Instituição.'),
+                    TD(
+                        'Suas faltas, saídas antecipadas e/ou atrasos ocorrem de maneira justificada, dentro dos limites possíveis.'),
+                    TD(
+                        'Suas faltas, saídas antecipadas e/ou atrasos as vezes ultrapassam os limites possíveis da Instituição,  às vezes injustificados.'),
+                    TD(
+                        'Suas faltas, saídas antecipadas e/ou atrasos são injustificados ultrapassando os limites da Instituição.'),
                     TD(self.printNotasSelectBox('NOTA_ASSIDUIDADE')),  # db.NOTA_ASSIDUIDADE
                     TD(self.printNotasSelectBox('NOTA_ASSIDUIDADE_CHEFIA')),  # db.NOTA_ASSIDUIDADE_CHEFIA
                     TD(SPAN('10', _class='ppf'))
@@ -180,9 +195,12 @@ class FormAvaliacao(object):
                         SPAN('2. Compromisso com qualidade', _class='cellTitle'),
                         SPAN('Trabalho executado com exatidão, clareza e correção dentro de prazos estabelecidos')
                     ),
-                    TD('Realiza suas atividades sempre visando o compromisso com a qualidade do trabalho, reconhecendo as falhas como desafio do processo que precisam ser superados'),
-                    TD('Procura realizar suas atividades visando a qualidade do trabalho, mas nem sempre os prazos são respeitados'),
-                    TD('Realiza esforços para realizar as atividades com qualidade, necessitando de constante supervisão para superar as falhas e cumprir prazos'),
+                    TD(
+                        'Realiza suas atividades sempre visando o compromisso com a qualidade do trabalho, reconhecendo as falhas como desafio do processo que precisam ser superados'),
+                    TD(
+                        'Procura realizar suas atividades visando a qualidade do trabalho, mas nem sempre os prazos são respeitados'),
+                    TD(
+                        'Realiza esforços para realizar as atividades com qualidade, necessitando de constante supervisão para superar as falhas e cumprir prazos'),
                     TD('Não se esforça em realizar suas atividades com compromisso e qualidade'),
                     TD(self.printNotasSelectBox('NOTA_COMPROMISSO')),  # db.NOTA_COMPROMISSO
                     TD(self.printNotasSelectBox('NOTA_COMPROMISSO_CHEFIA')),
@@ -194,10 +212,14 @@ class FormAvaliacao(object):
                         SPAN('3. Conhecimento', _class='cellTitle'),
                         SPAN('Domínio de conhecimentos teóricos e práticos para a execução das tarefas')
                     ),
-                    TD('Apresenta conhecimentos teóricos práticos adequados. Procura sempre manter-se atualizado em relação aos conhecimentos de sua área'),
-                    TD('Apresenta conhecimentos necessários para o desempenho das atividades. Demonstra interesse em adquirir novos conhecimentos em sua área'),
-                    TD('Apresenta conhecimentos “essenciais” para o desempenho das suas atividades e só adquire novos conhecimentos quando há exigência superior'),
-                    TD('Não apresenta conhecimentos para o desempenho de suas atividades e não demonstra interesse em adquirir novos conhecimentos em sua área'),
+                    TD(
+                        'Apresenta conhecimentos teóricos práticos adequados. Procura sempre manter-se atualizado em relação aos conhecimentos de sua área'),
+                    TD(
+                        'Apresenta conhecimentos necessários para o desempenho das atividades. Demonstra interesse em adquirir novos conhecimentos em sua área'),
+                    TD(
+                        'Apresenta conhecimentos “essenciais” para o desempenho das suas atividades e só adquire novos conhecimentos quando há exigência superior'),
+                    TD(
+                        'Não apresenta conhecimentos para o desempenho de suas atividades e não demonstra interesse em adquirir novos conhecimentos em sua área'),
                     TD(self.printNotasSelectBox('NOTA_CONHECIMENTO')),
                     TD(self.printNotasSelectBox('NOTA_CONHECIMENTO_CHEFIA')),
                     TD(SPAN('10', _class='ppf'))
@@ -209,7 +231,8 @@ class FormAvaliacao(object):
                     ),
                     TD('Coopera e se envolve nas atividades, ultrapassando as expectativas.'),
                     TD('Coopera e se envolve nas atividades de maneira satisfatória'),
-                    TD('Nem sempre coopera e se envolve com as atividades . Precisa, por vezes, ser chamado a colaborar'),
+                    TD(
+                        'Nem sempre coopera e se envolve com as atividades . Precisa, por vezes, ser chamado a colaborar'),
                     TD('Não coopera. Precisa ser constantemente solicitado mesmo nas atividades rotineiras'),
                     TD(self.printNotasSelectBox('NOTA_DESENVOLVIMENTO')),
                     TD(self.printNotasSelectBox('NOTA_DESENVOLVIMENTO_CHEFIA')),
@@ -222,8 +245,10 @@ class FormAvaliacao(object):
                     ),
                     TD('Antecipa-se na resolução de problemas que influenciam diretamente no seu trabalho'),
                     TD('Frequentemente resolve os problemas pertinentes a sua função'),
-                    TD('Tem pouca iniciativa. De vez em quando resolve pequenos problemas, mas na maioria das vezes aguarda ordens'),
-                    TD('Não faz nada sem que tenha sido solicitado ou explicado. Deixa pequenos problemas tomarem vulto aguardando solução de alguém'),
+                    TD(
+                        'Tem pouca iniciativa. De vez em quando resolve pequenos problemas, mas na maioria das vezes aguarda ordens'),
+                    TD(
+                        'Não faz nada sem que tenha sido solicitado ou explicado. Deixa pequenos problemas tomarem vulto aguardando solução de alguém'),
                     TD(self.printNotasSelectBox('NOTA_INICIATIVA')),
                     TD(self.printNotasSelectBox('NOTA_INICIATIVA_CHEFIA')),
                     TD(SPAN('10', _class='ppf'))
@@ -231,7 +256,8 @@ class FormAvaliacao(object):
                 TR(
                     TD(
                         SPAN('6. Organização/Planejamento', _class='cellTitle'),
-                        SPAN('Capacidade de estabelecer prioridades e planejar ações na melhor forma de execução das tarefas')
+                        SPAN(
+                            'Capacidade de estabelecer prioridades e planejar ações na melhor forma de execução das tarefas')
                     ),
                     TD('Planeja e organiza as ações de sua área de trabalho visando o desenvolvimento de toda UNIRIO'),
                     TD('Planeja e organiza as ações relacionadas ao desenvolvimento de sua área de trabalho'),
@@ -244,11 +270,13 @@ class FormAvaliacao(object):
                 TR(
                     TD(
                         SPAN('7. Produtividade/Eficiência', _class='cellTitle'),
-                        SPAN('Quantidade de trabalho realizado, dentro dos padrões estabelecidos para a função utilizando os recursos necessários.')
+                        SPAN(
+                            'Quantidade de trabalho realizado, dentro dos padrões estabelecidos para a função utilizando os recursos necessários.')
                     ),
                     TD('Realiza as tarefas atribuídas com total aproveitamento dos recursos'),
                     TD('Realiza as tarefas atribuídas com satisfatório aproveitamento dos recursos'),
-                    TD('Realiza a maior parte das tarefas atribuídas utilizando os recursos de forma pouco satisfatória'),
+                    TD(
+                        'Realiza a maior parte das tarefas atribuídas utilizando os recursos de forma pouco satisfatória'),
                     TD('Realiza as tarefas atribuídas com dificuldade e utiliza os recursos insatisfatoriamente'),
                     TD(self.printNotasSelectBox('NOTA_PRODUTIVIDADE')),
                     TD(self.printNotasSelectBox('NOTA_PRODUTIVIDADE_CHEFIA')),
@@ -270,10 +298,13 @@ class FormAvaliacao(object):
                 TR(
                     TD(
                         SPAN('9. Relacionamento Interpessoal', _class='cellTitle'),
-                        SPAN('Habilidade no trato com pessoas independente do nível hierárquico, profissional ou social')
+                        SPAN(
+                            'Habilidade no trato com pessoas independente do nível hierárquico, profissional ou social')
                     ),
-                    TD('Sabe lidar e estabelecer relações com as diferentes pessoas no ambiente de trabalho. È um facilitador'),
-                    TD('Interage com os colegas e chefia de trabalho com respeito e colaboração, facilitando o trabalho em equipe'),
+                    TD(
+                        'Sabe lidar e estabelecer relações com as diferentes pessoas no ambiente de trabalho. È um facilitador'),
+                    TD(
+                        'Interage com os colegas e chefia de trabalho com respeito e colaboração, facilitando o trabalho em equipe'),
                     TD('Se relaciona com respeito ao grupo de trabalho, interagindo somente quando solicitado'),
                     TD('Assume comportamentos conflituosos no grupo de trabalho gerando constante insatisfação.'),
                     TD(self.printNotasSelectBox('NOTA_RELACIONAMENTO')),
@@ -309,4 +340,43 @@ class FormAvaliacao(object):
                 )
             ),
             INPUT(_value='Enviar', _type='submit')
+        )
+
+    def printAnexo2RadioOptions(self, column):
+        options = []
+        checkedValue = self.contentForColumn(column)
+        isReadonly = self.columnShouldBeReadonlyForCurrentSession(column)
+
+        options.append(
+            INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _readonly=isReadonly,
+                  value=checkedValue))
+        options.append('Adequada')
+        options.append(
+            INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _readonly=isReadonly,
+                  value=checkedValue))
+        options.append('Inadequada')
+
+        return options
+
+    @property
+    def formAnexo2(self):
+        return FORM(
+            FIELDSET(
+                LEGEND('2. Condições de trabalho oferedicas pela instituição'),
+                LABEL('Iluminação: ', _for='p1'),
+                TAG[''](self.printAnexo2RadioOptions('FATOR_ILUMINACAO')), BR(),
+                LABEL('Temperatura: ', _for='p2'),
+                TAG[''](self.printAnexo2RadioOptions('FATOR_TEMPERATURA')), BR(),
+                LABEL('Ruídos: ', _for='p3'),
+                TAG[''](self.printAnexo2RadioOptions('FATOR_RUIDOS')), BR(),
+                LABEL('Equipamentos: ', _for='p4'),
+                TAG[''](self.printAnexo2RadioOptions('FATOR_EQUIPAMENTOS')), BR(),
+                LABEL('Instalações de trabalho: ', _for='p5'),
+                TAG[''](self.printAnexo2RadioOptions('FATOR_INSTALACOES')), BR(),
+            ),
+            FIELDSET(
+                LEGEND('3. Informações complementares sobre entraves que atrapalham o desenvolvimento das atividades'),
+                self.printTextarea('INFO_COMPLEMENTARES')
+            ),
+            INPUT(_type='submit', _value='Próximo')
         )
