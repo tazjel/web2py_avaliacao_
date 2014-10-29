@@ -6,6 +6,10 @@ from gluon.html import OPTION
 
 @auth.requires_login()
 def index():
+    session.ANO_EXERCICIO = None
+    session.avaliacaoTipo = None
+    session.avaliacao = None
+
     avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
 
     form = FORM(

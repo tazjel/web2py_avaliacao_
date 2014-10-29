@@ -5,7 +5,33 @@ from gluon import current
 class Avaliacao(object):
     def __init__(self, ano, siapeServidor):
         self.ano = ano
-        self.siapeServidor = siapeServidor
+        self.tipo = current.session.avalicaoTipo
+        self.siapeServidor = self._validateAccessForCurrentSession(siapeServidor)
+
+
+    def _validateAccessForCurrentSession(self, siapeServidor):
+        """
+        Dada a sessão corrente de usuário e tipo de avaliaçao, verifica se o mesmo tem autorização
+        para acessar a manipular uma avaliação.
+
+        * Em uma autoavaliação, o siapeServidor deve ser igual ao do servidor da sessão.
+        * Em uma avaliação de subordinado, o siapeServidor deve estar contido em algum dos dicionários
+        da lista de subordinados
+
+        :type siapeServidor: str
+        :rtype : str
+        :param siapeServidor: O SIAPE de um servidor a ser verificado como válido para uma avaliaçao
+        """
+        if current.session.avaliacaoTipo == "subordinados":
+            if current.session.avaliacaoTipo in self.tiposDeAvaliacaoesForCurrentSession().keys():
+                for subordinado in current.session.subordinados:
+                    if str(siapeServidor) == str(subordinado['SIAPE_SUBORDINADO']):
+                        return siapeServidor
+
+        elif str(siapeServidor) == str(current.session.dadosServidor['SIAPE_SERVIDOR']):
+                return siapeServidor
+
+        raise Exception("Você não tem permissão de acesso para a avaliaçao de " + str(siapeServidor))
 
     @staticmethod
     def tiposDeAvaliacaoesForCurrentSession():
@@ -32,10 +58,11 @@ class Avaliacao(object):
         """
         if current.session.avaliacao:
             if current.session.avaliacaoTipo == 'autoavaliacao':
-                if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
+                if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao[
+                    'CIENTE_SERVIDOR'] == 'T':
                     return True
             elif current.session.avaliacaoTipo == 'subordinados':
-                if 'CIENTE_CHEFIA' in current.session.avaliacao  and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
+                if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
                     return True
 
     def isChefiaCiente(self):
@@ -61,10 +88,20 @@ class Avaliacao(object):
         :return: int correspondente aos pontos por fator
         """
         if current.session.avaliacao:
-            return (int(current.session.avaliacao['NOTA_' + topico]) + int(current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
+            return (int(current.session.avaliacao['NOTA_' + topico]) + int(
+                current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
 
     @property
     def dados(self):
         avaliacao = current.db((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
-                          & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.siapeServidor)).select().first()
-        return avaliacao if avaliacao else {}
+                               & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.siapeServidor)).select().first()
+        if avaliacao:
+            return avaliacao
+        else:
+            return {
+                'SIAPE_SERVIDOR': self.siapeServidor,
+                'ANO_EXERCICIO': self.ano,
+                'SIAPE_CHEFIA': self.siapeServidor if self.tipo == "autoavaliacao" else current.session.dadosServidor['SIAPE_SERVIDOR']
+            }
+
+
