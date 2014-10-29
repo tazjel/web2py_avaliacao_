@@ -49,6 +49,8 @@ def pagina2():
 
 @auth.requires_login()
 def pagina3():
+    from MailAvaliacao import MailAvaliacao
+
     if not session.avaliacao:
         session.flash = 'Você precisa selecionar uma avaliação e um ano de exercício para acessar este formulário.'
         redirect(URL('default', 'index'))
@@ -60,6 +62,10 @@ def pagina3():
     if form.process().accepted:
         avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
         avaliacao.salvarModificacoes(form.vars)
+
+        # Ao final de uma avaliacao
+        email = MailAvaliacao(avaliacao)
+        email.sendConfirmationEmail()
 
         if session.avaliacaoTipo == 'subordinados':
             redirect(URL('subordinados', 'index'))

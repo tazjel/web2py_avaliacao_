@@ -151,15 +151,6 @@ class Avaliacao(object):
 
         return filteredDict
 
-    def _sendConfirmationEmail(self):
-        if self.tipo == 'autoavaliacao':
-            params = {
-                "to": self.servidorAvaliado['EMAIL_SERVIDOR'],
-                "subject": "[DTIC/PROGEP] Avaliação Funcional e Institucional de " + self.servidorAvaliado["SIAPE_SERVIDOR"],
-                "reply_to": "naoresponder.avaliacao@unirio.br"
-                "message": ""
-            }
-
 
     def salvarModificacoes(self, vars):
         if not self.isCiente():
@@ -169,11 +160,6 @@ class Avaliacao(object):
                                    & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR']), **filteredDict)
             # atualiza session
             current.session.avaliacao.update(filteredDict)
-
-            """ Se esta alteração foi finalizada com uma coluna CIENTE_ == 'T',
-            é porque o servidor fez sua ultima modificação"""
-            if self.isCiente():
-                self._sendConfirmationEmail()
 
             current.session.flash = "Modificações salvas com sucesso."
 
