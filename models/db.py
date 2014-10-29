@@ -50,8 +50,7 @@ db.define_table('AVAL_ANEXO_1',
                 Field('FATOR_RUIDOS', 'string', length=1),
                 Field('FATOR_INSTALACOES', 'string', length=1),
                 Field('FATOR_EQUIPAMENTOS', 'string', length=1),
-                Field('INFO_COMPLEMENTARES', 'string', length=4096),
-                primarykey=['ANO_EXERCICIO', 'SIAPE_SERVIDOR']
+                Field('INFO_COMPLEMENTARES', 'string', length=4096)
 )
 
 current.db = db
@@ -68,9 +67,12 @@ auth.settings.create_user_groups = False
 
 # # configure email
 mail = auth.settings.mailer
-mail.settings.server = 'logging' if request.is_local else 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
-mail.settings.login = 'username:password'
+# mail.settings.server = 'logging' if request.is_local else 'smtp.gmail.com:587'
+mail.settings.server = 'smtp.gmail.com:587'  # 'logging'
+mail.settings.sender = 'naoresponder.avaliacao@unirio.br'         # your email
+mail.settings.login = 'naoresponder.avaliacao@unirio.br:' + emailPass      # your credentials or None
+
+current.mail = mail
 
 ## configure auth policy
 auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']

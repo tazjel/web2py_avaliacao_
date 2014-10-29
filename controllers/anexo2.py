@@ -7,18 +7,19 @@ from datetime import date
 @auth.requires_login()
 def index():
     if not session.avaliacao:
-        if session.avaliacaoTipo == 'subordinados':
-            siapeServidor = request.vars.SIAPE_SERVIDOR
-        elif session.avaliacaoTipo == 'autoavaliacao':
-            siapeServidor = session.dadosServidor["SIAPE_SERVIDOR"]
+        session.flash = 'Você precisa selecionar uma avaliação e um ano de exercício para acessar este formulário.'
+        redirect(URL('default', 'index'))
 
-        avaliacao = Avaliacao(date.today().year, siapeServidor)
-        session.avaliacao = avaliacao.dados
+    if not session.avaliacaoTipo == 'autoavaliacao':
+        session.flash = 'Este formulário não pode ser acessado pela chefia.'
+        redirect(URL('default', 'index'))
 
-    form = FormAvaliacao().formAnexo2
+    form = FormAvaliacao(session.servidorAvaliado).formAnexo2
     form.add_button('Última Página', URL('anexo1', 'pagina3'))
 
     if form.process().accepted:
-        session.avaliacao.update(form.vars)
+        avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
+        avaliacao.salvarModificacoes(form.vars)
+        redirect(URL('anexo1', 'pagina2'))
 
     return dict(form=form)

@@ -22,10 +22,10 @@ class SIEChefiasImediatas(object):
         servidor = self.apiRequest.performGETRequest(self.path, params)
         return servidor.content[0]
 
-class SIESubordinados(object):
+
+class SIESubordinados(SIEChefiasImediatas):
     def __init__(self):
-        self.apiRequest = UNIRIOAPIRequest(current.kAPIKey)
-        self.path = "V_SUBORDINADOS"
+        super(SIESubordinados, self).__init__()
         self.lmin = 0
         self.lmax = 1000
 

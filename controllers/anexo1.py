@@ -6,22 +6,22 @@ from datetime import date
 
 @auth.requires_login()
 def index():
+    if not session.avaliacao:
+        if session.avaliacaoTipo == 'subordinados':
+            siapeServidor = request.vars.SIAPE_SERVIDOR
+        elif session.avaliacaoTipo == 'autoavaliacao':
+            siapeServidor = session.dadosServidor["SIAPE_SERVIDOR"]
 
-    if session.avaliacaoTipo == 'subordinados':
-        siapeServidor = request.vars.SIAPE_SERVIDOR
-    elif session.avaliacaoTipo == 'autoavaliacao':
-        siapeServidor = session.dadosServidor["SIAPE_SERVIDOR"]
+        avaliacao = Avaliacao(session.ANO_EXERCICIO, siapeServidor)
+        session.avaliacao = avaliacao.dados
 
-    avaliacao = Avaliacao(date.today().year, siapeServidor)
-    session.avaliacao = avaliacao.dados
-
-    form = FormAvaliacao().formIdentificao
+    form = FormAvaliacao(session.servidorAvaliado).formIdentificao
     form.add_button('Voltar', URL('default', 'index'))
 
     if form.process().accepted:
         if session.avaliacaoTipo == 'subordinados':
             redirect(URL('anexo1', 'pagina2'))
-        elif session.avaliacaoTipo == 'autoavaliacao' and avaliacao.isChefiaCiente():
+        elif session.avaliacaoTipo == 'autoavaliacao' and Avaliacao.isChefiaCiente():
             redirect(URL('anexo2', 'index'))
         else:
             session.flash = "Sua chefia imediata ainda não enviou sua avaliação."
@@ -33,14 +33,16 @@ def index():
 @auth.requires_login()
 def pagina2():
     if not session.avaliacao:
-        avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
-        session.avaliacao = avaliacao.dados
+        session.flash = 'Você precisa selecionar uma avaliação e um ano de exercício para acessar este formulário.'
+        redirect(URL('default', 'index'))
 
-    form = FormAvaliacao().formPagina2
+    form = FormAvaliacao(session.servidorAvaliado).formPagina2
     form.add_button('Voltar', URL('anexo2', 'index'))
 
     if form.process().accepted:
-        session.avaliacao.update(form.vars)
+        avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
+        avaliacao.salvarModificacoes(form.vars)
+        redirect(URL("anexo1", "pagina3"))
 
     return dict(form=form)
 
@@ -48,16 +50,21 @@ def pagina2():
 @auth.requires_login()
 def pagina3():
     if not session.avaliacao:
-        avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
-        session.avaliacao = avaliacao.dados
+        session.flash = 'Você precisa selecionar uma avaliação e um ano de exercício para acessar este formulário.'
+        redirect(URL('default', 'index'))
 
-    form = FormAvaliacao().formPagina3
+    form = FormAvaliacao(session.servidorAvaliado).formPagina3
     form.add_button('Voltar', URL('anexo1', 'pagina2'))
     form.add_button('Primeira Página', URL('anexo2', 'index'))
 
     if form.process().accepted:
-        session.avaliacao.update(form.vars)
-        response.flash = "Formulário salvo com sucesso."
+        avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
+        avaliacao.salvarModificacoes(form.vars)
+
+        if session.avaliacaoTipo == 'subordinados':
+            redirect(URL('subordinados', 'index'))
+        elif session.avaliacaoTipo == 'autoavaliacao':
+            redirect(URL('default', 'index'))
 
     return dict(form=form,
                 data=date.today())

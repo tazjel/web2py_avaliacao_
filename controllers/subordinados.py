@@ -8,8 +8,8 @@ def index():
         redirect(URL('default', 'index'))
 
     # TODO criar lista de subordinados com links
-    lista = UL([A(subordinado['NOME_SUBORDINADO'],
-                  _href=URL('anexo1', 'index', vars={'SIAPE_SERVIDOR': subordinado['SIAPE_SUBORDINADO']})
+    lista = UL([A(subordinado['NOME_SERVIDOR'],
+                  _href=URL('anexo1', 'index', vars={'SIAPE_SERVIDOR': subordinado['SIAPE_SERVIDOR']})
                   ) for subordinado in session.subordinados])
 
     return dict(lista=lista)

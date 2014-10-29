@@ -6,8 +6,8 @@ from gluon.html import *
 
 
 class FormAvaliacao(object):
-    def __init__(self):
-        self.servidor = current.session.dadosServidor
+    def __init__(self, servidor):
+        self.servidor = servidor
         # TODO Por causa de um UnicodeEncodeError, foi necessário colocar essa gambi. Resolver ou utilizar DBSM.REMOVEACENTOS na View
         self.tipo = current.session.avaliacaoTipo
 
@@ -37,9 +37,9 @@ class FormAvaliacao(object):
                 LABEL('Nome: ', _for='nome'),
                 INPUT(_name='CHEFIA_TITULAR', _type='text', _value=self.servidor['CHEFIA_TITULAR'].encode('utf8'),
                       _readonly='true'), BR(),
-                # LABEL('Matrícula SIAPE: ', _for='siape'),
-                # INPUT(_name='SIAPE_CHEFIA', _type='text', _value=self.servidor['SIAPE_CHEFIA'],
-                #       _readonly='true'), BR(),
+                LABEL('Matrícula SIAPE: ', _for='siape'),
+                INPUT(_name='SIAPE_CHEFIA', _type='text', _value=self.servidor['SIAPE_CHEFIA_TITULAR'],
+                      _readonly='true'), BR(),
                 # LABEL('Cargo: ', _for='cargo'),
                 # INPUT(_name='CARGO_CHEFIA', _type='text', _value=self.servidor['CARGO_CHEFIA'].encode('utf8'),
                 #       _readonly='true'), BR(),
@@ -71,16 +71,6 @@ class FormAvaliacao(object):
         if current.session.avaliacao and column in current.session.avaliacao and current.session.avaliacao[column]:
             return current.session.avaliacao[column]
 
-    def columnNeedChefia(self, column):
-        """
-        Verifica se a coluna fornecidade deve ser preenchiada pela chefia
-
-        :param column: uma coluna do banco AVAL_ANEXO_1
-        :type column: str
-        :rtype : bool
-        """
-        return column.endswith("_CHEFIA")
-
     def columnShouldBeReadonlyForCurrentSession(self, column):
         """
         Caso o tipo de avaliação seja uma Autoavaliação e a coluna seja do tipo CHEFIA,
@@ -93,15 +83,15 @@ class FormAvaliacao(object):
         :param column: uma coluna do banco AVAL_ANEXO_1
         :return:
         """
-        if self.columnNeedChefia(column) and self.tipo == 'autoavaliacao':
+        if Avaliacao.columnNeedChefia(column) and self.tipo == 'autoavaliacao':
             return True
-        elif not self.columnNeedChefia(column) and self.tipo == 'subordinados':
+        elif not Avaliacao.columnNeedChefia(column) and self.tipo == 'subordinados':
             return True
-        elif not self.columnNeedChefia(column) and self.tipo == 'autoavaliacao':
-            if 'CIENTE_SERVIDOR' in current.session.avaliacao:
+        elif not Avaliacao.columnNeedChefia(column) and self.tipo == 'autoavaliacao':
+            if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
                 return True
-        elif self.columnNeedChefia(column) and self.tipo == 'subordinados':
-            if 'CIENTE_CHEFIA' in current.session.avaliacao:
+        elif Avaliacao.columnNeedChefia(column) and self.tipo == 'subordinados':
+            if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
                 return True
 
     def printNotasSelectBox(self, column):
@@ -149,7 +139,7 @@ class FormAvaliacao(object):
 
         if not Avaliacao.isCiente():
             # Removi _checked=v por não achar necessário. Caso haja algum problema, reavaliar necessidade
-            return INPUT(_name=column, value='ciente', _type='checkbox', requires=IS_NOT_EMPTY())
+            return INPUT(_name=column, _value='T', _type='checkbox', requires=IS_NOT_EMPTY())
         else:
             return IMG(_src=URL('static/images', 'checked.jpg'), _alt='Ciente')
 
@@ -338,8 +328,13 @@ class FormAvaliacao(object):
             ),
             INPUT(_value='Enviar', _type='submit')
         )
-
+    # TODO radios nao estao ficando readonly. Descobrir pq. Não afeta funcionalidade real do form
     def printAnexo2RadioOptions(self, column):
+        """
+
+        :param column: uma coluna do banco AVAL_ANEXO_1
+        :return: A list of form components
+        """
         options = []
         checkedValue = self.contentForColumn(column)
         isReadonly = self.columnShouldBeReadonlyForCurrentSession(column)

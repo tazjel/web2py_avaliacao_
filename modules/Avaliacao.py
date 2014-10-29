@@ -1,12 +1,14 @@
 # coding=utf-8
 from gluon import current
+from datetime import date
 
 
 class Avaliacao(object):
     def __init__(self, ano, siapeServidor):
         self.ano = ano
-        self.tipo = current.session.avalicaoTipo
-        self.siapeServidor = self._validateAccessForCurrentSession(siapeServidor)
+        self.tipo = current.session.avaliacaoTipo
+        self.servidorAvaliado = self._validateAccessForCurrentSession(siapeServidor)
+        current.session.servidorAvaliado = self.servidorAvaliado
 
 
     def _validateAccessForCurrentSession(self, siapeServidor):
@@ -14,22 +16,21 @@ class Avaliacao(object):
         Dada a sessão corrente de usuário e tipo de avaliaçao, verifica se o mesmo tem autorização
         para acessar a manipular uma avaliação.
 
-        * Em uma autoavaliação, o siapeServidor deve ser igual ao do servidor da sessão.
-        * Em uma avaliação de subordinado, o siapeServidor deve estar contido em algum dos dicionários
-        da lista de subordinados
+        * Em uma autoavaliação, o dicionário devem ser igual ao do servidor da sessão.
+        * Em uma avaliação de subordinado, o dicionário deve estar contido na lista de subordinados
 
-        :type siapeServidor: str
-        :rtype : str
-        :param siapeServidor: O SIAPE de um servidor a ser verificado como válido para uma avaliaçao
+        :type dadosServidor: dict
+        :rtype: dict
+        :param dadosServidor: O dicionário correspondente a um servidor válido para uma avaliaçao
         """
         if current.session.avaliacaoTipo == "subordinados":
             if current.session.avaliacaoTipo in self.tiposDeAvaliacaoesForCurrentSession().keys():
                 for subordinado in current.session.subordinados:
-                    if str(siapeServidor) == str(subordinado['SIAPE_SUBORDINADO']):
-                        return siapeServidor
+                    if str(subordinado['SIAPE_SERVIDOR']) == str(siapeServidor):
+                        return subordinado
 
-        elif str(siapeServidor) == str(current.session.dadosServidor['SIAPE_SERVIDOR']):
-                return siapeServidor
+        elif str(siapeServidor) == str(current.session.dadosServidor["SIAPE_SERVIDOR"]):
+                return current.session.dadosServidor
 
         raise Exception("Você não tem permissão de acesso para a avaliaçao de " + str(siapeServidor))
 
@@ -65,14 +66,15 @@ class Avaliacao(object):
                 if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
                     return True
 
-    def isChefiaCiente(self):
+    @staticmethod
+    def isChefiaCiente():
         """
         Dada uma autoavaliação de um servidor, verifica se a chefia imediata já terminou sua avaliação
 
         :rtype : bool
         """
         if current.session.avaliacaoTipo == 'autoavaliacao':
-            if current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
+            if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
                 return True
 
     @staticmethod
@@ -94,14 +96,90 @@ class Avaliacao(object):
     @property
     def dados(self):
         avaliacao = current.db((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
-                               & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.siapeServidor)).select().first()
+                               & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR'])).select().first()
         if avaliacao:
             return avaliacao
         else:
             return {
-                'SIAPE_SERVIDOR': self.siapeServidor,
-                'ANO_EXERCICIO': self.ano,
-                'SIAPE_CHEFIA': self.siapeServidor if self.tipo == "autoavaliacao" else current.session.dadosServidor['SIAPE_SERVIDOR']
+                "ANO_EXERCICIO": self.ano,
+                "SIAPE_SERVIDOR": self.servidorAvaliado['SIAPE_SERVIDOR'],
+                "SIAPE_CHEFIA": self.servidorAvaliado['SIAPE_CHEFIA_TITULAR']
             }
+
+    @staticmethod
+    def columnNeedChefia(column):
+        """
+        Verifica se a coluna fornecidade deve ser preenchiada pela chefia
+
+        :param column: uma coluna do banco AVAL_ANEXO_1
+        :type column: str
+        :rtype : bool
+        """
+        return column.endswith("_CHEFIA")
+
+    def _validFieldsForChefia(self, fields):
+        """
+        Dada uma lista de campos, o método retorna somente os campos em que a chefia pode manipular
+
+        :type fields: list
+        :rtype : list
+        :param fields: Uma lista de campos a ser validada
+        :return: Campos que podem ser manipulados em uma sessão de chefia
+        """
+        return [field for field in fields if self.columnNeedChefia(field)]
+
+
+    def _filterFields(self, vars):
+        """
+
+
+        :type vars: dict
+        :param vars:
+        """
+        if self.tipo == 'subordinados':
+            validFields = self._validFieldsForChefia(vars.keys())
+        elif self.tipo == 'autoavaliacao':
+            validFields = [field for field in vars.keys() if field not in self._validFieldsForChefia(vars.keys())]
+
+        filteredDict = {}
+        filteredDict.update(self.dados)
+        filteredDict.update({"ANO_EXERCICIO": self.ano, "DATA_DOCUMENTO": date.today()})
+
+        for field in validFields:
+            if field in current.db.AVAL_ANEXO_1.fields:
+                filteredDict.update({field: vars[field]})
+
+        return filteredDict
+
+    def _sendConfirmationEmail(self):
+        if self.tipo == 'autoavaliacao':
+            params = {
+                "to": self.servidorAvaliado['EMAIL_SERVIDOR'],
+                "subject": "[DTIC/PROGEP] Avaliação Funcional e Institucional de " + self.servidorAvaliado["SIAPE_SERVIDOR"],
+                "reply_to": "naoresponder.avaliacao@unirio.br"
+                "message": ""
+            }
+
+
+    def salvarModificacoes(self, vars):
+        if not self.isCiente():
+            filteredDict = self._filterFields(vars)
+
+            current.db.AVAL_ANEXO_1.update_or_insert((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
+                                   & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR']), **filteredDict)
+            # atualiza session
+            current.session.avaliacao.update(filteredDict)
+
+            """ Se esta alteração foi finalizada com uma coluna CIENTE_ == 'T',
+            é porque o servidor fez sua ultima modificação"""
+            if self.isCiente():
+                self._sendConfirmationEmail()
+
+            current.session.flash = "Modificações salvas com sucesso."
+
+
+
+
+
 
 

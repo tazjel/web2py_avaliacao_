@@ -18,7 +18,7 @@ class Servidor(object):
         APISubordinados = SIESubordinados()
         # TODO para fins de desenvolvimento. Alterar linha para testes finais e produção
         # return APISubordinados.getSubordinados(current.session.auth.user.username)
-        return APISubordinados.getSubordinados('41203100787')
+        return APISubordinados.getSubordinados('12467599779')
 
     def getDadosToSession(self):
         """
@@ -36,4 +36,4 @@ class Servidor(object):
             if subordinados:
                 # Se o servidor possuir subordinados, armazenamos os mesmos, ordenados ASC por NOME_SUBORDINADO
                 from operator import itemgetter
-                current.session.subordinados = sorted(subordinados, key=itemgetter('NOME_SUBORDINADO'))
+                current.session.subordinados = sorted(subordinados, key=itemgetter('NOME_SERVIDOR'))
