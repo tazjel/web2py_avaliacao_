@@ -99,7 +99,7 @@ class FormAvaliacao(object):
                 ),
                 TR(
                     TD('Nota final'),
-                    TD(Avaliacao.notaFinal)
+                    TD(Avaliacao.notaFinal())
                     , _class='tableFooter')
             )
             , _class='greyTableSmall')

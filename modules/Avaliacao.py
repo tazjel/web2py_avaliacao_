@@ -1,6 +1,7 @@
 # coding=utf-8
 from gluon import current
 from datetime import date
+import math
 
 
 class Avaliacao(object):
@@ -93,13 +94,13 @@ class Avaliacao(object):
             return (int(current.session.avaliacao['NOTA_' + topico]) + int(
                 current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
 
-    @property
-    def notaFinal(self):
+    @staticmethod
+    def notaFinal():
         somatorioNotas = 0
         for k, v in current.session.avaliacao.iteritems():
-            if self.columnIsNota(k):
-                somatorioNotas += int(v)
-        return somatorioNotas / 18
+            if Avaliacao.columnIsNota(k) and v:
+                somatorioNotas += v
+        return int(somatorioNotas / 18)
 
     @property
     def dados(self):
@@ -125,7 +126,8 @@ class Avaliacao(object):
         """
         return column.endswith("_CHEFIA")
 
-    def columnIsNota(self, column):
+    @staticmethod
+    def columnIsNota(column):
         """
 
         :param column: uma coluna do banco AVAL_ANEXO_1
