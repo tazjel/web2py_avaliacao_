@@ -53,6 +53,10 @@ db.define_table('AVAL_ANEXO_1',
                 Field('INFO_COMPLEMENTARES', 'string', length=4096)
 )
 
+# db.define_table("SUBORDINADOS_EXCLUIR"
+#
+# )
+
 current.db = db
 
 from gluon.tools import Auth, Service, PluginManager
