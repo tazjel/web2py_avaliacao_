@@ -55,7 +55,7 @@ h1{
 
 table.greyTable, table.greyTableSmall{
 	border:1px solid #000000;
-	margin: 0px auto;
+	margin: 0 auto;
 }
 
 table.greyTable .cellTitle, table.greyTableSmall .cellTitle{
@@ -94,7 +94,7 @@ table.greyTable .tableFooter, table.greyTableSmall .tableFooter{
 
 .centered{
 	width: 100%;
-	margin:0px auto;
+	margin:0 auto;
 	display: block;
 	clear: both;
 	text-align: center;
