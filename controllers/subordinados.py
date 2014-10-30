@@ -19,12 +19,16 @@ def index():
 
     form = FORM(
         UL(items),
+        BR(),
+        TEXTAREA(_placeholder="Opcional: Insira uma justificativa que ajude a interpretar a fonte do problema.", _name="OBSERVACAO"),
+        P("Clique no botão abaixo para remover os seridores da lista, ou clique no nome de um servidor para iniciar sua avaliação."),
         INPUT(_type="submit", _value="Não se encontra em exercício na unidade")
     )
 
     if form.process().accepted:
         subordinados = Subordinados()
-        subordinados.removerSubordinados(form.vars.subordinados)
+        siapes = form.vars.subordinados if isinstance(form.vars.subordinados, list) else [form.vars.subordinados]
+        subordinados.removerSubordinados(siapes, form.vars.OBSERVACAO)
         redirect(URL('subordinados', 'index'))
 
         session.flash = "Servidores removidos com sucesso."

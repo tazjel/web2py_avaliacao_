@@ -53,9 +53,12 @@ db.define_table('AVAL_ANEXO_1',
                 Field('INFO_COMPLEMENTARES', 'string', length=4096)
 )
 
-# db.define_table("SUBORDINADOS_EXCLUIR"
-#
-# )
+db.define_table("SUBORDINADOS_EXCLUIR",
+    Field('SIAPE_SERVIDOR', 'integer'),
+    Field('SIAPE_CHEFIA_TITULAR', 'integer'),
+    Field('OBSERVACAO', 'text'),
+    Field('UNIDADE_EXERCICIO_SERVIDOR', 'string')
+)
 
 current.db = db
 
