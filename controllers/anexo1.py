@@ -51,7 +51,6 @@ def pagina2():
 @auth.requires_login()
 def pagina3():
     from MailAvaliacao import MailAvaliacao
-    avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
 
     if not session.avaliacao:
         session.flash = 'Você precisa selecionar uma avaliação e um ano de exercício para acessar este formulário.'
