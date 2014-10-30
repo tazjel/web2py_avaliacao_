@@ -30,6 +30,7 @@ def index():
     return dict(form=form,
                 year=date.today().year)
 
+
 @auth.requires_login()
 def pagina2():
     if not session.avaliacao:
@@ -50,14 +51,18 @@ def pagina2():
 @auth.requires_login()
 def pagina3():
     from MailAvaliacao import MailAvaliacao
+    avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
 
     if not session.avaliacao:
         session.flash = 'Você precisa selecionar uma avaliação e um ano de exercício para acessar este formulário.'
         redirect(URL('default', 'index'))
 
-    form = FormAvaliacao(session.servidorAvaliado).formPagina3
+    formAvaliacao = FormAvaliacao(session.servidorAvaliado)
+    form = formAvaliacao.formPagina3
     form.add_button('Voltar', URL('anexo1', 'pagina2'))
     form.add_button('Primeira Página', URL('anexo2', 'index'))
+
+    resumo = formAvaliacao.resumoTable
 
     if form.process().accepted:
         avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
@@ -73,4 +78,59 @@ def pagina3():
             redirect(URL('default', 'index'))
 
     return dict(form=form,
+                resumo=resumo,
                 data=date.today())
+
+
+@auth.requires_login()
+def resumo():
+
+    table = TABLE(
+        TR(
+            TD('Fatores'),
+            TD('Pontos por Fator**')
+            , _class='tableHeader'
+        ),
+        TR(
+            TD('1 - Assiduidade/Pontualidade', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('ASSIDUIDADE'))
+        ),
+        TR(
+            TD('2 - Compromisso com qualidade', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('COMPROMISSO'))
+        ),
+        TR(
+            TD('3 - Conhecimento', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('CONHECIMENTO'))
+        ),
+        TR(
+            TD('4 - Cooperação/Desenvolvimento', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('DESENVOLVIMENTO'))
+        ),
+        TR(
+            TD('5 - Iniciativa', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('INICIATIVA'))
+        ),
+        TR(
+            TD('6 - Organização/Planejamento', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('ORGANIZACAO'))
+        ),
+        TR(
+            TD('7 - Produtividade/Eficiência', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('PRODUTIVIDADE'))
+        ),
+        TR(
+            TD('8 - Responsabilidade', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('RESPONSABILIDADE'))
+        ),
+        TR(
+            TD('9 - Relacionamento Interpessoal', _class='cellTitle'),
+            TD(avaliacao.pontosPorFator('RELACIONAMENTO'))
+        ),
+        TR(
+            TD('Nota final'),
+            TD(avaliacao.notaFinal)
+            , _class='tableFooter')
+        , _class='greyTableSmall')
+
+    return dict(table=table)

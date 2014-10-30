@@ -94,6 +94,14 @@ class Avaliacao(object):
                 current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
 
     @property
+    def notaFinal(self):
+        somatorioNotas = 0
+        for k, v in current.session.avaliacao.iteritems():
+            if self.columnIsNota(k):
+                somatorioNotas += int(v)
+        return somatorioNotas / 18
+
+    @property
     def dados(self):
         avaliacao = current.db((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
                                & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR'])).select().first()
@@ -116,6 +124,15 @@ class Avaliacao(object):
         :rtype : bool
         """
         return column.endswith("_CHEFIA")
+
+    def columnIsNota(self, column):
+        """
+
+        :param column: uma coluna do banco AVAL_ANEXO_1
+        :type column: str
+        :rtype : bool
+        """
+        return column.startswith("NOTA_")
 
     def _validFieldsForChefia(self, fields):
         """

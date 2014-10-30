@@ -17,7 +17,8 @@ class FormAvaliacao(object):
             FIELDSET(
                 LEGEND('1. Identificação do Servidor Avaliado'),
                 LABEL('Nome: ', _for='nome'),
-                INPUT(_name='NOME_SERVIDOR', _type='text', _value=self.servidor['NOME_SERVIDOR'].encode('utf8'), _readonly='true'),
+                INPUT(_name='NOME_SERVIDOR', _type='text', _value=self.servidor['NOME_SERVIDOR'].encode('utf8'),
+                      _readonly='true'),
                 BR(),
                 LABEL('Matrícula SIAPE: ', _for='siape'),
                 INPUT(_name='SIAPE_SERVIDOR', _type='text', _value=self.servidor['SIAPE_SERVIDOR'],
@@ -42,7 +43,7 @@ class FormAvaliacao(object):
                       _readonly='true'), BR(),
                 # LABEL('Cargo: ', _for='cargo'),
                 # INPUT(_name='CARGO_CHEFIA', _type='text', _value=self.servidor['CARGO_CHEFIA'].encode('utf8'),
-                #       _readonly='true'), BR(),
+                # _readonly='true'), BR(),
                 LABEL('Unidade em exercício: ', _for='unidade'),
                 INPUT(_name='UNIDADE_EXERCICIO_CHEFIA', _type='text',
                       _value=self.servidor['UNIDADE_EXERCICIO_CHEFIA'].encode('utf8'), _readonly='true'), BR()
@@ -50,6 +51,58 @@ class FormAvaliacao(object):
 
             INPUT(_value='Próximo', _type='submit')
         )
+
+    @property
+    def resumoTable(self):
+        return TABLE(
+            TBODY(
+                TR(
+                    TD('Fatores'),
+                    TD('Pontos por Fator**')
+                    , _class='tableHeader'
+                ),
+                TR(
+                    TD('1 - Assiduidade/Pontualidade', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('ASSIDUIDADE'))
+                ),
+                TR(
+                    TD('2 - Compromisso com qualidade', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('COMPROMISSO'))
+                ),
+                TR(
+                    TD('3 - Conhecimento', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('CONHECIMENTO'))
+                ),
+                TR(
+                    TD('4 - Cooperação/Desenvolvimento', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('DESENVOLVIMENTO'))
+                ),
+                TR(
+                    TD('5 - Iniciativa', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('INICIATIVA'))
+                ),
+                TR(
+                    TD('6 - Organização/Planejamento', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('ORGANIZACAO'))
+                ),
+                TR(
+                    TD('7 - Produtividade/Eficiência', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('PRODUTIVIDADE'))
+                ),
+                TR(
+                    TD('8 - Responsabilidade', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('RESPONSABILIDADE'))
+                ),
+                TR(
+                    TD('9 - Relacionamento Interpessoal', _class='cellTitle'),
+                    TD(Avaliacao.pontosPorFator('RELACIONAMENTO'))
+                ),
+                TR(
+                    TD('Nota final'),
+                    TD(Avaliacao.notaFinal)
+                    , _class='tableFooter')
+            )
+            , _class='greyTableSmall')
 
     def notaForColumn(self, column):
         """
@@ -328,10 +381,13 @@ class FormAvaliacao(object):
             ),
             INPUT(_value='Enviar', _type='submit')
         )
+
     # TODO radios nao estao ficando readonly. Descobrir pq. Não afeta funcionalidade real do form
     def printAnexo2RadioOptions(self, column):
         """
 
+
+        :rtype : list
         :param column: uma coluna do banco AVAL_ANEXO_1
         :return: A list of form components
         """
