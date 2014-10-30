@@ -14,8 +14,8 @@ class MailAvaliacao(object):
         """
         self.avaliacao = avaliacao
         self.reply_to = "naoresponder.avaliacao@unirio.br"
-        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional de " \
-                       + self.avaliacao.servidorAvaliado["NOME_SERVIDOR"].encode('utf-8')
+        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional de " + self.avaliacao.servidorAvaliado["NOME_SERVIDOR"].encode('utf-8')
+        self.footer = "**** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
 
     #TODO Verificar se não é possivel pegar algum erro caso o email não seja enviado
     def sendConfirmationEmail(self):
@@ -95,4 +95,56 @@ class MailAvaliacao(object):
             "message": self.avaliacao.servidorAvaliado['CHEFIA_TITULAR'].encode('utf-8')
                        + ", sua avaliação de " + self.avaliacao.servidorAvaliado["NOME_SERVIDOR"].encode('utf-8')
                        + " foi enviada com sucesso. Acompanhe o andamento em http://sistemas.unirio.br/avaliacao"
+        }
+
+class MailSubordinados(object):
+    def __init__(self, subordinado, observacao=""):
+        """
+
+
+        :type observacao: str
+        :type subordinado: dict
+        """
+        self.reply_to = "naoresponder.avaliacao@unirio.br"
+        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional"
+        self.subordinado = subordinado
+        self.observacao = observacao
+        self.setorCompetenteMail = "progep.avaliacao@unirio.br"
+        self.footer = "\r\n\r\n **** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
+
+    def sendSubordinadoRemocaoMail(self):
+        chefia = self.parametrosParaChefia()
+        setorCompetente = self.parametrosParaSetorCompetente()
+
+        current.mail.send(**chefia)
+        current.mail.send(**setorCompetente)
+
+    def _formatedObservacao(self):
+        if self.observacao:
+            return '"' + self.observacao + '"'
+        else:
+            return '"Nenhuma observação fornecida."'
+
+    def parametrosParaChefia(self):
+        return {
+            "to": [self.subordinado['EMAIL_CHEFIA_TITULAR']],
+            "subject": self.subject,
+            "reply_to": self.reply_to,
+            "message": self.subordinado['CHEFIA_TITULAR'].encode('utf-8')
+                       + ", o servidor " + self.subordinado["NOME_SERVIDOR"].encode('utf-8')
+                       + ' foi removido da sua lista de subordinados pelo motivo: ' + self._formatedObservacao()
+                       + ' e foi encaminhado para devidas providências'
+                       + self.footer
+        }
+
+    def parametrosParaSetorCompetente(self):
+        return {
+            "to": [self.setorCompetenteMail],
+            "subject": self.subject,
+            "reply_to": self.reply_to,
+            "message": self.subordinado['CHEFIA_TITULAR'].encode('utf-8')
+                       + ", que exerce cargo de CHEFIA em " + self.subordinado["UNIDADE_EXERCICIO_CHEFIA"].encode('utf-8')
+                       + ', removeu ' + self.subordinado['NOME_SERVIDOR'].encode('utf-8') + ', portador do SIAPE '
+                       + str(self.subordinado['SIAPE_SERVIDOR']) + ' da sua lista de subordinados pelo motivo: '
+                       + self._formatedObservacao() + self.footer
         }

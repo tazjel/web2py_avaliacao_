@@ -19,7 +19,8 @@ class Servidor(object):
         # TODO para fins de desenvolvimento. Alterar linha para testes finais e produção
         # subordinados = APISubordinados.getSubordinados(current.session.auth.user.username)
         subordinados = APISubordinados.getSubordinados('12467599779')
-        excluidos = current.db(current.db.SUBORDINADOS_EXCLUIR.SIAPE_CHEFIA_TITULAR==current.session.dadosServidor["SIAPE_SERVIDOR"]).select()
+        # excluidos = current.db(current.db.SUBORDINADOS_EXCLUIR.SIAPE_CHEFIA_TITULAR==current.session.dadosServidor["SIAPE_SERVIDOR"]).select()
+        excluidos = current.db(current.db.SUBORDINADOS_EXCLUIR.SIAPE_CHEFIA_TITULAR==current.session.dadosServidor["SIAPE_CHEFIA_TITULAR"]).select()
         for excluido in excluidos:
             for subordinado in subordinados:
                 if excluido.SIAPE_SERVIDOR == subordinado["SIAPE_SERVIDOR"]:

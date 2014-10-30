@@ -1,4 +1,5 @@
 from gluon import current
+from MailAvaliacao import MailSubordinados
 
 
 class Subordinados(object):
@@ -26,5 +27,8 @@ class Subordinados(object):
                     current.db.commit()
                     self.subordinados.remove(subordinado)
 
-                    # TODO Algum email deve ser enviado ao remover um servidor.
+                    email = MailSubordinados(subordinado, observacao)
+                    email.sendSubordinadoRemocaoMail()
+
+
 
