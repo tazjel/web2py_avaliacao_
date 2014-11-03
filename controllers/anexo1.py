@@ -28,7 +28,7 @@ def index():
             redirect(URL('default', 'index'))
 
     return dict(form=form,
-                year=date.today().year)
+                year=int(session.ANO_EXERCICIO))
 
 
 @auth.requires_login()
