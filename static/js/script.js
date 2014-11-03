@@ -1,7 +1,8 @@
+// TODO todo esse arquivo está um lixo e representa todo o meu saco com frontend
 $(document).ready(function(){
-	notasChefia = new Array();
-	notasServidor = new Array();
-	i = 0;
+    var notasChefia = [];
+    var notasServidor = [];
+    var i = 0;
 
 	$("input.chefia").each(function(){
 		notasChefia.push($(this).val());
@@ -13,7 +14,7 @@ $(document).ready(function(){
 	});
 
 	// ppf = span da célula de Pontos por Fator em anexo1 / pagina2
-	$(".ppf").each(function(){
+	$("span.ppf").each(function(){
 		if (notasChefia[i] && notasServidor[i]){
 			ppf = cacularPontosPorFator( notasChefia[i], notasServidor[i] );
 			if (ppf >= 7){
@@ -24,7 +25,7 @@ $(document).ready(function(){
 			}
 		}
 		else{
-			ppf = '--';		
+			ppf = '--';
 		}
 
 		$(this).text(ppf);

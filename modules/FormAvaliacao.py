@@ -157,14 +157,16 @@ class FormAvaliacao(object):
         :rtype: gluon.html.INPUT
         :return: SELECT ou INPUT de uma nota
         """
+
+        extraClass = "chefia" if Avaliacao.columnNeedChefia(column) else "servidor"
         if self.columnShouldBeReadonlyForCurrentSession(column):
             return INPUT(_name=column, _value=self.notaForColumn(column), _type='text', _readonly=ON,
-                         _class='notaField ')
+                         _class='notaField ' + extraClass)
         else:
             # TODO refazer forma como essa lista e opção está sendo criar por solução mais elegante
             options = [""]
             options.extend(range(0, 11))
-            return SELECT(options, _name=column, value=self.notaForColumn(column), _class='notaSelect ',
+            return SELECT(options, _name=column, value=self.notaForColumn(column), _class='notaSelect ' + extraClass,
                           requires=IS_INT_IN_RANGE(0, 11, error_message='A nota deve ser um número entre 0 e 10'))
 
     def printTextarea(self, column):
@@ -376,7 +378,7 @@ class FormAvaliacao(object):
                 LEGEND('12. Resultado da avaliação de desempenho individual'),
                 DIV('Declaro que li e concordo com todos os itens desta avaliação:',
                     self.printCienteInput()
-                    , _class='centered'
+                    , _class='centered important'
                 )
             ),
             INPUT(_value='Enviar', _type='submit')

@@ -134,3 +134,20 @@ textarea[readonly="readonly"]{
  .alerta{
  	font-size: 9pt
  }
+
+ label{
+     font-weight: bold;
+     margin:5px 0;
+ }
+
+input[type="radio"]{
+    margin-left: 15px;
+    margin-right: 3px;
+    vertical-align: middle
+}
+
+.important{
+    background-color: #FFB9B8;
+    font-weight: bold;
+    margin: 20px;
+}
