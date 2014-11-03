@@ -55,7 +55,7 @@ h1{
 
 table.greyTable, table.greyTableSmall{
 	border:1px solid #000000;
-	margin: 0 auto;
+	margin: 20px auto;
 }
 
 table.greyTable .cellTitle, table.greyTableSmall .cellTitle{
@@ -150,4 +150,9 @@ input[type="radio"]{
     background-color: #FFB9B8;
     font-weight: bold;
     margin: 20px;
+    padding:10px;
+}
+
+fieldset{
+    margin:15px 0;
 }

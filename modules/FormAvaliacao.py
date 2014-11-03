@@ -196,7 +196,7 @@ class FormAvaliacao(object):
             # Removi _checked=v por não achar necessário. Caso haja algum problema, reavaliar necessidade
             return INPUT(_name=column, _value='T', _type='checkbox', requires=IS_NOT_EMPTY())
         else:
-            return IMG(_src=URL('static/images', 'checked.jpg'), _alt='Ciente')
+            return IMG(_src=URL('static/images', 'checked.png'), _alt='Ciente')
 
     @property
     def formPagina2(self):
@@ -376,7 +376,7 @@ class FormAvaliacao(object):
             ),
             FIELDSET(
                 LEGEND('12. Resultado da avaliação de desempenho individual'),
-                DIV('Declaro que li e concordo com todos os itens desta avaliação:',
+                DIV('Declaro que li e concordo com todos os itens desta avaliação: ',
                     self.printCienteInput()
                     , _class='centered important'
                 )
@@ -384,7 +384,6 @@ class FormAvaliacao(object):
             INPUT(_value='Enviar', _type='submit')
         )
 
-    # TODO radios nao estao ficando readonly. Descobrir pq. Não afeta funcionalidade real do form
     def printAnexo2RadioOptions(self, column):
         """
 
@@ -398,11 +397,11 @@ class FormAvaliacao(object):
         isReadonly = self.columnShouldBeReadonlyForCurrentSession(column)
 
         options.append(
-            INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _readonly=isReadonly,
+            INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
                   value=checkedValue))
         options.append('Adequada')
         options.append(
-            INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _readonly=isReadonly,
+            INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
                   value=checkedValue))
         options.append('Inadequada')
 
