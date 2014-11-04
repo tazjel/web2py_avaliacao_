@@ -109,15 +109,16 @@ class MailSubordinados(object):
         self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional"
         self.subordinado = subordinado
         self.observacao = observacao
-        self.setorCompetenteMail = "progep.avaliacao@unirio.br"
+        self.setorCompetenteMail = "progepe.spmf@unirio.br"
         self.footer = "\r\n\r\n **** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
 
     def sendSubordinadoRemocaoMail(self):
         chefia = self.parametrosParaChefia()
-        setorCompetente = self.parametrosParaSetorCompetente()
+        setorCompetente = self._parametrosParaSetorCompetente()
 
         current.mail.send(**chefia)
         current.mail.send(**setorCompetente)
+
 
     def _formatedObservacao(self):
         if self.observacao:
@@ -137,7 +138,7 @@ class MailSubordinados(object):
                        + self.footer
         }
 
-    def parametrosParaSetorCompetente(self):
+    def _parametrosParaSetorCompetente(self):
         return {
             "to": [self.setorCompetenteMail],
             "subject": self.subject,
@@ -147,4 +148,52 @@ class MailSubordinados(object):
                        + ', removeu ' + self.subordinado['NOME_SERVIDOR'].encode('utf-8') + ', portador do SIAPE '
                        + str(self.subordinado['SIAPE_SERVIDOR']) + ' da sua lista de subordinados pelo motivo: '
                        + self._formatedObservacao() + self.footer
+        }
+
+
+class MailPROGEPE(object):
+    def __init__(self, servidor):
+        self.reply_to = "naoresponder.avaliacao@unirio.br"
+        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional"
+        self.setorCompetenteMail = "progepe.spmf@unirio.br"
+        self.footer = "\r\n\r\n **** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
+        self.servidor = servidor
+
+    def sendInformativoPROGEP(self, siape, nome):
+        """
+
+
+        :type nome: str
+        :type siape: str
+        :param siape: A matrícula SIAPE de um servidor que deveria fazer parte da unidade
+        :param nome: O nome do servidor que deveria fazer parte da unidade
+        """
+
+        requerente = self._parametrosParaRequerente(siape, nome)
+        setorCompetente = self._parametrosChefiaParaPROGEPE(siape, nome)
+
+        current.mail.send(**requerente)
+        current.mail.send(**setorCompetente)
+
+    def _parametrosChefiaParaPROGEPE(self, siape, nome):
+        return {
+            "to": [self.setorCompetenteMail],
+            "subject": self.subject,
+            "reply_to": self.reply_to,
+            "message": self.servidor['NOME_SERVIDOR'].encode('utf-8')
+                       + ", em exercicio no(a) " + self.servidor["UNIDADE_EXERCICIO_CHEFIA"].encode('utf-8')
+                       + ', cujo e-mail é ' + self.servidor['EMAIL_SERVIDOR'].encode('utf-8') + 'afima que o servidor '
+                       + nome + ', portador do SIAPE ' + str(siape) + ', deveria constar em sua lista de subordinados.'
+                       + self.footer
+        }
+
+    def _parametrosParaRequerente(self, siape, nome):
+        return {
+            "to": self.servidor['EMAIL_SERVIDOR'].encode('utf-8'),
+            "subject": self.subject,
+            "reply_to": self.reply_to,
+            "message": self.servidor['NOME_SERVIDOR'].encode('utf-8')
+                       + ', sua solicitação de inclusão do subordinado '
+                       + nome + ', portador do SIAPE ' + str(siape) + ' foi enviada com sucesso ao setor responsável'
+                       + self.footer
         }

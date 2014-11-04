@@ -1,13 +1,15 @@
 # coding=utf-8
 from gluon.html import *
 from Subordinados import Subordinados
+from gluon.validators import IS_NOT_EMPTY
+
 
 def index():
     if not session.subordinados:
         session.flash = "Você não possui subordinados."
         redirect(URL('default', 'index'))
 
-    # TODO criar lista de subordinados com links
+    session.avaliacao = None
 
     items = []
     for subordinado in session.subordinados:
@@ -21,7 +23,7 @@ def index():
         UL(items),
         BR(),
         TEXTAREA(_placeholder="Opcional: Insira uma justificativa que ajude a interpretar a fonte do problema.", _name="OBSERVACAO"),
-        P("Clique no botão abaixo para remover os seridores da lista, ou clique no nome de um servidor para iniciar sua avaliação."),
+        P("Clique no botão abaixo para remover os seridores da lista."),
         INPUT(_type="submit", _value="Não se encontra em exercício na unidade")
     )
 
@@ -35,3 +37,24 @@ def index():
 
     return dict(lista=form)
 
+
+def informarProgepe():
+    from MailAvaliacao import MailPROGEPE
+
+    form = FORM(
+        LABEL("SIAPE: ", _for='siape'),
+        INPUT(_name='siape', requires=IS_NOT_EMPTY()),
+        LABEL("Nome: ", _for='nome'),
+        INPUT(_name='nome', requires=IS_NOT_EMPTY()),
+        BR(),
+        INPUT(_type='submit', _value='Enviar comunicado')
+    )
+
+    if form.process().accepted:
+        email = MailPROGEPE(session.dadosServidor)
+        email.sendInformativoPROGEP(form.vars.siape, form.vars.nome)
+
+        session.flash = 'Comunicado enviado com sucesso para PROGEPE.'
+        redirect(URL('subordinados', 'index'))
+
+    return dict(form=form)

@@ -1,6 +1,10 @@
 {{extend 'layout.html'}}
 <p>Abaixo está a lista de servidores lotados nesse local, de acordo com o SIE.
     Caso exista algum servidor que não esteja atualmente em exercício neste setor,
-    favor [procedimento da DTIC]. Um e-mail será enviado para o setor competente para
-    as providências cabíveis.</p>
+    favor marcar a caixa ao lado do nome do servidor, inserir uma justificativa, se pertinente, e clicar no
+    botão abaixo para enviar. Um e-mail será enviado para o setor competente para as providências cabíveis.</p>
+        <p>Caso exista um servidor em exercício na unidade que <b>não</b> esteja presente na lista abaixo,
+        favor <b><a href="{{=URL("subordinados", "informarProgepe")}}">clicar aqui</a></b> para comunicar a PROGEPE.</p>
+
+    <h3>Clique no nome de um servidor para iniciar sua avaliação.</h3>
 {{=lista}}
