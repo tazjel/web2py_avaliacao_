@@ -86,8 +86,9 @@ if request.is_local:
     auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
     db.auth_user.username.label = 'CPF'
 else:
-    auth.settings.login_methods=[ldap_auth(mode='uid', server='10.224.16.100', base_dn='ou=people,dc=unirio,dc=br')]
-    auth.settings.actions_disabled=['register', 'retrieve_username', 'profile', 'lost_password']
+    from gluon.contrib.login_methods.ldap_auth import ldap_auth
+    auth.settings.login_methods = [ldap_auth(mode='uid', server='10.224.16.100', base_dn='ou=people,dc=unirio,dc=br')]
+    auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
     db.auth_user.username.label = 'CPF'
 
 from Servidor import Servidor
