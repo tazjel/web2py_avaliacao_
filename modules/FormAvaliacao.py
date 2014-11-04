@@ -144,7 +144,7 @@ class FormAvaliacao(object):
             if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
                 return True
         elif Avaliacao.columnNeedChefia(column) and self.tipo == 'subordinados':
-            if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
+            if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
                 return True
 
     def printNotasSelectBox(self, column):
@@ -230,7 +230,7 @@ class FormAvaliacao(object):
                         'Suas faltas, saídas antecipadas e/ou atrasos são injustificados ultrapassando os limites da Instituição.'),
                     TD(self.printNotasSelectBox('NOTA_ASSIDUIDADE')),  # db.NOTA_ASSIDUIDADE
                     TD(self.printNotasSelectBox('NOTA_ASSIDUIDADE_CHEFIA')),  # db.NOTA_ASSIDUIDADE_CHEFIA
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_ASSIDUIDADE'))
                 ),
                 TR(
                     TD(
@@ -247,7 +247,7 @@ class FormAvaliacao(object):
                     TD(self.printNotasSelectBox('NOTA_COMPROMISSO')),  # db.NOTA_COMPROMISSO
                     TD(self.printNotasSelectBox('NOTA_COMPROMISSO_CHEFIA')),
                     # db.NOTA_ASSIDUIDADE_CHEFIA
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_COMPROMISSO'))
                 ),
                 TR(
                     TD(
@@ -264,7 +264,7 @@ class FormAvaliacao(object):
                         'Não apresenta conhecimentos para o desempenho de suas atividades e não demonstra interesse em adquirir novos conhecimentos em sua área'),
                     TD(self.printNotasSelectBox('NOTA_CONHECIMENTO')),
                     TD(self.printNotasSelectBox('NOTA_CONHECIMENTO_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_CONHECIMENTO'))
                 ),
                 TR(
                     TD(
@@ -278,7 +278,7 @@ class FormAvaliacao(object):
                     TD('Não coopera. Precisa ser constantemente solicitado mesmo nas atividades rotineiras'),
                     TD(self.printNotasSelectBox('NOTA_DESENVOLVIMENTO')),
                     TD(self.printNotasSelectBox('NOTA_DESENVOLVIMENTO_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_DESENVOLVIMENTO'))
                 ),
                 TR(
                     TD(
@@ -293,7 +293,7 @@ class FormAvaliacao(object):
                         'Não faz nada sem que tenha sido solicitado ou explicado. Deixa pequenos problemas tomarem vulto aguardando solução de alguém'),
                     TD(self.printNotasSelectBox('NOTA_INICIATIVA')),
                     TD(self.printNotasSelectBox('NOTA_INICIATIVA_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_INICIATIVA'))
                 ),
                 TR(
                     TD(
@@ -307,7 +307,7 @@ class FormAvaliacao(object):
                     TD('Não planeja e organiza as ações de sua área de trabalho'),
                     TD(self.printNotasSelectBox('NOTA_ORGANIZACAO')),
                     TD(self.printNotasSelectBox('NOTA_ORGANIZACAO_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_ORGANIZACAO'))
                 ),
                 TR(
                     TD(
@@ -322,7 +322,7 @@ class FormAvaliacao(object):
                     TD('Realiza as tarefas atribuídas com dificuldade e utiliza os recursos insatisfatoriamente'),
                     TD(self.printNotasSelectBox('NOTA_PRODUTIVIDADE')),
                     TD(self.printNotasSelectBox('NOTA_PRODUTIVIDADE_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_PRODUTIVIDADE'))
                 ),
                 TR(
                     TD(
@@ -335,7 +335,7 @@ class FormAvaliacao(object):
                     TD('Não se empenha em cumprir seus deveres e obrigações no que se refere ao trabalho'),
                     TD(self.printNotasSelectBox('NOTA_RESPONSABILIDADE')),
                     TD(self.printNotasSelectBox('NOTA_RESPONSABILIDADE_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_RESPONSABILIDADE'))
                 ),
                 TR(
                     TD(
@@ -351,7 +351,7 @@ class FormAvaliacao(object):
                     TD('Assume comportamentos conflituosos no grupo de trabalho gerando constante insatisfação.'),
                     TD(self.printNotasSelectBox('NOTA_RELACIONAMENTO')),
                     TD(self.printNotasSelectBox('NOTA_RELACIONAMENTO_CHEFIA')),
-                    TD(SPAN('10', _class='ppf'))
+                    TD(SPAN('10', _class='ppf NOTA_RELACIONAMENTO'))
                 ), _class='greyTable'
             ),
             INPUT(_value='Próximo', _type='submit'),
@@ -397,11 +397,11 @@ class FormAvaliacao(object):
         isReadonly = self.columnShouldBeReadonlyForCurrentSession(column)
 
         options.append(
-            INPUT(_name=column, _type='radio', _value='s', _disabled=isReadonly,
+            INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
                   value=checkedValue))
         options.append('Adequada')
         options.append(
-            INPUT(_name=column, _type='radio', _value='n', _disabled=isReadonly,
+            INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
                   value=checkedValue))
         options.append('Inadequada')
 
@@ -427,5 +427,6 @@ class FormAvaliacao(object):
                 LEGEND('3. Informações complementares sobre entraves que atrapalham o desenvolvimento das atividades'),
                 self.printTextarea('INFO_COMPLEMENTARES')
             ),
-            INPUT(_type='submit', _value='Próximo')
+            INPUT(_type='submit', _value='Próximo'),
+            _class='anexo2'
         )

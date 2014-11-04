@@ -160,6 +160,6 @@ label{
     display:inline;
 }
 
-.dadosServidor label{
+.dadosServidor label, .anexo2 label{
     display:block;
 }
