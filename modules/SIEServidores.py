@@ -1,6 +1,6 @@
 # coding=utf-8
 from gluon import current
-from unirio.api import UNIRIOAPIRequest
+from unirio.api.apirequest import UNIRIOAPIRequest
 
 
 class SIEChefiasImediatas(object):
