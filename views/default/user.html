@@ -2,6 +2,7 @@
 
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
 <div id="web2py_user_form">
+Seu usuário e senha são os mesmos do Portal da Identificação. Para maiores informações, {{=A("clique aqui", _href="http://id.unirio.br")}}
 {{
 if request.args(0)=='login' and not session.auth_2_factor_user:
     if not 'register' in auth.settings.actions_disabled:
