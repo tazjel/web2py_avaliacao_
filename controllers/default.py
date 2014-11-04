@@ -13,14 +13,17 @@ def index():
     avaliacao = Avaliacao(date.today().year, session.dadosServidor["SIAPE_SERVIDOR"])
 
     form = FORM(
+        BR(),
         LABEL('Exercício: ', _for='ANO_EXERCICIO'),
         SELECT([OPTION(ano.ANO_EXERCICIO, _value=ano.ANO_EXERCICIO) for ano in avaliacao.anosDeExercicio()],
                _name='ANO_EXERCICIO'),
+        BR(),BR(),
         LABEL('Tipo: ', _for='avaliacaoTipo'),
         SELECT([OPTION(v, _value=k) for k, v in avaliacao.tiposDeAvaliacaoesForCurrentSession().iteritems()],
                _name='avaliacaoTipo',
                _class='avaliacaoTipo',
                _value='autoavaliacao'),
+        BR(),
         INPUT(_value='Próximo', _type='submit')
     )
 

@@ -77,5 +77,5 @@ def pagina3():
             redirect(URL('default', 'index'))
 
     return dict(form=form,
-                resumo=resumo,
+                resumo=resumo if resumo else "",
                 data=date.today())

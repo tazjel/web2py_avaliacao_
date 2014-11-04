@@ -48,61 +48,61 @@ class FormAvaliacao(object):
                 INPUT(_name='UNIDADE_EXERCICIO_CHEFIA', _type='text',
                       _value=self.servidor['UNIDADE_EXERCICIO_CHEFIA'].encode('utf8'), _readonly='true'), BR()
                 , _class='dadosServidor'),
-
             INPUT(_value='Próximo', _type='submit')
         )
 
     @property
     def resumoTable(self):
-        return TABLE(
-            TBODY(
-                TR(
-                    TD('Fatores'),
-                    TD('Pontos por Fator**')
-                    , _class='tableHeader'
-                ),
-                TR(
-                    TD('1 - Assiduidade/Pontualidade', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('ASSIDUIDADE'))
-                ),
-                TR(
-                    TD('2 - Compromisso com qualidade', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('COMPROMISSO'))
-                ),
-                TR(
-                    TD('3 - Conhecimento', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('CONHECIMENTO'))
-                ),
-                TR(
-                    TD('4 - Cooperação/Desenvolvimento', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('DESENVOLVIMENTO'))
-                ),
-                TR(
-                    TD('5 - Iniciativa', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('INICIATIVA'))
-                ),
-                TR(
-                    TD('6 - Organização/Planejamento', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('ORGANIZACAO'))
-                ),
-                TR(
-                    TD('7 - Produtividade/Eficiência', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('PRODUTIVIDADE'))
-                ),
-                TR(
-                    TD('8 - Responsabilidade', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('RESPONSABILIDADE'))
-                ),
-                TR(
-                    TD('9 - Relacionamento Interpessoal', _class='cellTitle'),
-                    TD(Avaliacao.pontosPorFator('RELACIONAMENTO'))
-                ),
-                TR(
-                    TD('Nota final'),
-                    TD(Avaliacao.notaFinal())
-                    , _class='tableFooter')
-            )
-            , _class='greyTableSmall')
+        if not self.tipo == 'subordinados':
+            return TABLE(
+                TBODY(
+                    TR(
+                        TD('Fatores'),
+                        TD('Pontos por Fator**')
+                        , _class='tableHeader'
+                    ),
+                    TR(
+                        TD('1 - Assiduidade/Pontualidade', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('ASSIDUIDADE'))
+                    ),
+                    TR(
+                        TD('2 - Compromisso com qualidade', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('COMPROMISSO'))
+                    ),
+                    TR(
+                        TD('3 - Conhecimento', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('CONHECIMENTO'))
+                    ),
+                    TR(
+                        TD('4 - Cooperação/Desenvolvimento', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('DESENVOLVIMENTO'))
+                    ),
+                    TR(
+                        TD('5 - Iniciativa', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('INICIATIVA'))
+                    ),
+                    TR(
+                        TD('6 - Organização/Planejamento', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('ORGANIZACAO'))
+                    ),
+                    TR(
+                        TD('7 - Produtividade/Eficiência', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('PRODUTIVIDADE'))
+                    ),
+                    TR(
+                        TD('8 - Responsabilidade', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('RESPONSABILIDADE'))
+                    ),
+                    TR(
+                        TD('9 - Relacionamento Interpessoal', _class='cellTitle'),
+                        TD(Avaliacao.pontosPorFator('RELACIONAMENTO'))
+                    ),
+                    TR(
+                        TD('Nota final'),
+                        TD(Avaliacao.notaFinal())
+                        , _class='tableFooter')
+                )
+                , _class='greyTableSmall')
 
     def notaForColumn(self, column):
         """
@@ -397,11 +397,11 @@ class FormAvaliacao(object):
         isReadonly = self.columnShouldBeReadonlyForCurrentSession(column)
 
         options.append(
-            INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
+            INPUT(_name=column, _type='radio', _value='s', _disabled=isReadonly,
                   value=checkedValue))
         options.append('Adequada')
         options.append(
-            INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
+            INPUT(_name=column, _type='radio', _value='n', _disabled=isReadonly,
                   value=checkedValue))
         options.append('Inadequada')
 

@@ -156,3 +156,10 @@ input[type="radio"]{
 fieldset{
     margin:15px 0;
 }
+label{
+    display:inline;
+}
+
+.dadosServidor label{
+    display:block;
+}

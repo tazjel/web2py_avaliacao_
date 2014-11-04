@@ -91,8 +91,9 @@ class Avaliacao(object):
         :return: int correspondente aos pontos por fator
         """
         if current.session.avaliacao:
-            return (int(current.session.avaliacao['NOTA_' + topico]) + int(
-                current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
+            if 'NOTA_'+topico in current.session.avaliacao:
+                return (int(current.session.avaliacao['NOTA_' + topico]) + int(
+                    current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
 
     @staticmethod
     def notaFinal():

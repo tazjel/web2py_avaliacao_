@@ -89,7 +89,7 @@ class MailAvaliacao(object):
         :return: Dicionário de parâmetros de email
         """
         return {
-            "to": [self.avaliacao.servidorAvaliado['EMAIL_SERVIDOR']],
+            "to": [self.avaliacao.servidorAvaliado['EMAIL_CHEFIA_TITULAR']],
             "subject": self.subject,
             "reply_to": self.reply_to,
             "message": self.avaliacao.servidorAvaliado['CHEFIA_TITULAR'].encode('utf-8')
