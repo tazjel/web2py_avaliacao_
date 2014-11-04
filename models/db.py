@@ -81,9 +81,14 @@ mail.settings.login = 'naoresponder.avaliacao@unirio.br:' + emailPass      # you
 
 current.mail = mail
 
-## configure auth policy
-auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
-db.auth_user.username.label = 'CPF'
+# Se a requisição for local, utiliza base auth de teste, caso contrário, utiliza LDAP
+if request.is_local:
+    auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
+    db.auth_user.username.label = 'CPF'
+else:
+    auth.settings.login_methods=[ldap_auth(mode='uid', server='10.224.16.100', base_dn='ou=people,dc=unirio,dc=br')]
+    auth.settings.actions_disabled=['register', 'retrieve_username', 'profile', 'lost_password']
+    db.auth_user.username.label = 'CPF'
 
 from Servidor import Servidor
 
