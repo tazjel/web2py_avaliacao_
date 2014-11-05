@@ -1,4 +1,6 @@
-from gluon import current
+# coding=utf-8
+from gluon import current, redirect
+from gluon.html import URL
 from MailAvaliacao import MailSubordinados
 
 
@@ -8,7 +10,6 @@ class Subordinados(object):
 
     def removerSubordinados(self, siapes, observacao=None):
         """
-
 
         :type subordinados: list
         :param subordinados: Lista de subordinados a serem removidos
@@ -26,9 +27,13 @@ class Subordinados(object):
                     current.db.SUBORDINADOS_EXCLUIR.insert(**params)
                     current.db.commit()
                     self.subordinados.remove(subordinado)
+                    try:
+                        email = MailSubordinados(subordinado, observacao)
+                        email.sendSubordinadoRemocaoMail()
+                    except Exception:
+                        current.session.flash = "Um erro ocorreu durante o envio de e-mail de confirmação de remoção de subordinado."
+                        redirect(URL('subordinados', 'index'))
 
-                    email = MailSubordinados(subordinado, observacao)
-                    email.sendSubordinadoRemocaoMail()
 
 
 
