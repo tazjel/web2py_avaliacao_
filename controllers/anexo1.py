@@ -67,9 +67,13 @@ def pagina3():
         avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
         avaliacao.salvarModificacoes(form.vars)
 
-        # Ao final de uma avaliacao
-        email = MailAvaliacao(avaliacao)
-        email.sendConfirmationEmail()
+        try:
+            # Ao final de uma avaliacao
+            email = MailAvaliacao(avaliacao)
+            email.sendConfirmationEmail()
+        except Exception:
+            session.flash += ' Não foi possivel enviar o email de confirmação. Verifique se o servidor ' \
+                             'possui email cadastrado e indicador de corres pondência marcado.'
 
         if session.avaliacaoTipo == 'subordinados':
             redirect(URL('subordinados', 'index'))
