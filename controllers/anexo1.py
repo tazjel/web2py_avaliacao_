@@ -11,6 +11,9 @@ def index():
             siapeServidor = request.vars.SIAPE_SERVIDOR
         elif session.avaliacaoTipo == 'autoavaliacao':
             siapeServidor = session.dadosServidor["SIAPE_SERVIDOR"]
+        else:
+            """Caso alguém tente acessar esta página pulando a fase de seleção de tipo de avaliação..."""
+            redirect(URL('default', 'index'))
 
         avaliacao = Avaliacao(session.ANO_EXERCICIO, siapeServidor)
         session.avaliacao = avaliacao.dados
