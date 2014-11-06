@@ -181,8 +181,8 @@ class MailPROGEPE(object):
             "subject": self.subject,
             "reply_to": self.reply_to,
             "message": self.servidor['NOME_SERVIDOR'].encode('utf-8')
-                       + ", em exercicio no(a) " + self.servidor["UNIDADE_EXERCICIO_CHEFIA"].encode('utf-8')
-                       + ', cujo e-mail é ' + self.servidor['EMAIL_SERVIDOR'].encode('utf-8') + 'afima que o servidor '
+                       + ", em exercício no(a) " + self.servidor["UNIDADE_EXERCICIO_CHEFIA"].encode('utf-8')
+                       + ', cujo e-mail é ' + self.servidor['EMAIL_SERVIDOR'].encode('utf-8') + 'afirma que o servidor '
                        + nome + ', portador do SIAPE ' + str(siape) + ', deveria constar em sua lista de subordinados.'
                        + self.footer
         }
