@@ -76,7 +76,7 @@ def pagina3():
             email.sendConfirmationEmail()
         except Exception:
             session.flash += ' Não foi possivel enviar o email de confirmação. Verifique se o servidor ' \
-                             'possui email cadastrado e indicador de corres pondência marcado.'
+                             'possui email cadastrado e indicador de correspondência marcado.'
 
         if session.avaliacaoTipo == 'subordinados':
             redirect(URL('subordinados', 'index'))
