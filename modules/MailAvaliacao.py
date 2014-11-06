@@ -106,14 +106,14 @@ class MailSubordinados(object):
         :type subordinado: dict
         """
         self.reply_to = "naoresponder.avaliacao@unirio.br"
-        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional"
+        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional - Movimentação"
         self.subordinado = subordinado
         self.observacao = observacao
         self.setorCompetenteMail = "progepe.spmf@unirio.br"
         self.footer = "\r\n\r\n **** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
 
     def sendSubordinadoRemocaoMail(self):
-        chefia = self.parametrosParaChefia()
+        chefia = self._parametrosParaChefia()
         setorCompetente = self._parametrosParaSetorCompetente()
 
         current.mail.send(**chefia)
@@ -126,7 +126,7 @@ class MailSubordinados(object):
         else:
             return '"Nenhuma observação fornecida."'
 
-    def parametrosParaChefia(self):
+    def _parametrosParaChefia(self):
         return {
             "to": [self.subordinado['EMAIL_CHEFIA_TITULAR']],
             "subject": self.subject,
@@ -134,9 +134,10 @@ class MailSubordinados(object):
             "message": self.subordinado['CHEFIA_TITULAR'].encode('utf-8')
                        + ", o servidor " + self.subordinado["NOME_SERVIDOR"].encode('utf-8')
                        + ' foi removido da sua lista de subordinados pelo motivo: ' + self._formatedObservacao()
-                       + ' e foi encaminhado para devidas providências'
+                       + ' e foi encaminhado para devidas providências de movimentação.'
                        + self.footer
         }
+
 
     def _parametrosParaSetorCompetente(self):
         return {
@@ -154,7 +155,7 @@ class MailSubordinados(object):
 class MailPROGEPE(object):
     def __init__(self, servidor):
         self.reply_to = "naoresponder.avaliacao@unirio.br"
-        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional"
+        self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional - Inclusão"
         self.setorCompetenteMail = "progepe.spmf@unirio.br"
         self.footer = "\r\n\r\n **** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
         self.servidor = servidor

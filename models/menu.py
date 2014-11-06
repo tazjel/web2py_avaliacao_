@@ -5,8 +5,8 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.logo = A(B('web',SPAN(2),'py'),XML('&trade;&nbsp;'),
-                  _class="brand",_href="http://www.web2py.com/")
+response.logo = A(B('DTIC/UNIRIO'),
+                  _class="brand",_href="http://dtic.unirio.br")
 response.title = request.application.replace('_',' ').title()
 response.subtitle = ''
 
@@ -24,12 +24,12 @@ response.google_analytics_id = None
 
 response.menu = [
     ("Início", False, URL('default', 'index'), []),
-    ("Anexo 1", False, URL('anexo1', 'index'),[
-        ("Início", False, URL('anexo1', 'index')),
-        ("Página 2", False, URL('anexo1', 'pagina2')),
-        ("Página 3", False, URL('anexo1', 'pagina3'))
-    ]),
-    ("Anexo 2", False, URL('anexo2', 'index'))
+    # ("Anexo 1", False, URL('anexo1', 'index'),[
+    #     ("Início", False, URL('anexo1', 'index')),
+    #     ("Página 2", False, URL('anexo1', 'pagina2')),
+    #     ("Página 3", False, URL('anexo1', 'pagina3'))
+    # ]),
+    # ("Anexo 2", False, URL('anexo2', 'index'))
 ]
 
 DEVELOPMENT_MENU = False

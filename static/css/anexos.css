@@ -163,3 +163,20 @@ label{
 .dadosServidor label, .anexo2 label{
     display:block;
 }
+
+.navbar-inverse .navbar-inner{
+    background: #0081c2;
+    border-color: #0081c2;
+
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav>li>a{
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.navbar-inverse .nav li.dropdown.open>.dropdown-toggle, .navbar-inverse .nav li.dropdown.active>.dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active>.dropdown-toggle {
+    color: #ffffff;
+    background-color: rgb(0, 178, 252);
+    border-color:#0081c2;
+}
