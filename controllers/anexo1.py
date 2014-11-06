@@ -64,8 +64,6 @@ def pagina3():
     form.add_button('Voltar', URL('anexo1', 'pagina2'))
     form.add_button('Primeira Página', URL('anexo2', 'index'))
 
-    resumo = formAvaliacao.resumoTable
-
     if form.process().accepted:
         avaliacao = Avaliacao(session.ANO_EXERCICIO, session.servidorAvaliado['SIAPE_SERVIDOR'])
         avaliacao.salvarModificacoes(form.vars)
@@ -75,7 +73,7 @@ def pagina3():
             email = MailAvaliacao(avaliacao)
             email.sendConfirmationEmail()
         except Exception:
-            session.flash += ' Não foi possivel enviar o email de confirmação. Verifique se o servidor ' \
+            session.flash += ' Não foi possível enviar o email de confirmação. Verifique se o servidor ' \
                              'possui email cadastrado e indicador de correspondência marcado.'
 
         if session.avaliacaoTipo == 'subordinados':
@@ -84,5 +82,5 @@ def pagina3():
             redirect(URL('default', 'index'))
 
     return dict(form=form,
-                resumo=resumo,
+                resumo=formAvaliacao.resumoTable if session.avaliacaoTipo == 'autoavaliacao' else "",
                 data=date.today())
