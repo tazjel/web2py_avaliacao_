@@ -83,15 +83,17 @@ current.mail = mail
 
 # Se a requisição for local, utiliza base auth de teste, caso contrário, utiliza LDAP
 
-if request.is_local:
-    auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
-    db.auth_user.username.label = 'CPF'
-else:
+if not request.is_local:
     from gluon.contrib.login_methods.ldap_auth import ldap_auth
     auth.settings.login_methods = [ldap_auth(mode='uid', server='10.224.16.100', base_dn='ou=people,dc=unirio,dc=br')]
-    auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
-    db.auth_user.username.label = 'CPF'
 
 from Servidor import Servidor
-
+db.auth_user.username.label = 'CPF'
+auth.settings.actions_disabled = ['register',
+                                  'retrieve_username',
+                                  'remember_me',
+                                  'profile',
+                                  'change_password',
+                                  'request_reset_password']
+auth.settings.remember_me_form = False
 auth.settings.login_onaccept = Servidor().getDadosToSession()
