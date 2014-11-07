@@ -82,16 +82,15 @@ mail.settings.login = 'naoresponder.avaliacao@unirio.br:' + emailPass      # you
 current.mail = mail
 
 # Se a requisição for local, utiliza base auth de teste, caso contrário, utiliza LDAP
-auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
-db.auth_user.username.label = 'CPF'
-# if request.is_local:
-#     auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
-#     db.auth_user.username.label = 'CPF'
-# else:
-#     from gluon.contrib.login_methods.ldap_auth import ldap_auth
-#     auth.settings.login_methods = [ldap_auth(mode='uid', server='10.224.16.100', base_dn='ou=people,dc=unirio,dc=br')]
-#     auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
-#     db.auth_user.username.label = 'CPF'
+
+if request.is_local:
+    auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
+    db.auth_user.username.label = 'CPF'
+else:
+    from gluon.contrib.login_methods.ldap_auth import ldap_auth
+    auth.settings.login_methods = [ldap_auth(mode='uid', server='10.224.16.100', base_dn='ou=people,dc=unirio,dc=br')]
+    auth.settings.actions_disabled = ['register', 'retrieve_username', 'profile', 'lost_password']
+    db.auth_user.username.label = 'CPF'
 
 from Servidor import Servidor
 
