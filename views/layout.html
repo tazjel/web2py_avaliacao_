@@ -138,10 +138,16 @@
         <footer class="footer span12" id="footer">
             <div class="footer-content">
                 {{block footer}} <!-- this is default footer -->
+                <div id="footer-leftdiv">
+
+                </div>
                 <div id="poweredBy" class="pull-right">
-                    {{=T('Powered by')}}
-                    <a href="http://www.web2py.com/">web2py</a> |
-                    <a href="https://www.unirio.br/dtic">DTIC</a>
+                    {{=A(IMG(_src=URL("static", "images/logo_dtic_64.png"), _class="desaturate"), _href="http://www.unirio.br/dtic")}}
+                    {{=A(IMG(_src=URL("static", "images/logo_api_64.png"), _class="desaturate"), _href="http://sistemas.unirio.br/api")}}
+                    {{=A(IMG(_src=URL("static", "images/logo_id_64.png"), _class="desaturate"), _href="http://id.unirio.br")}}
+
+                    {{=A(IMG(_src=URL("static", "images/logo_web2py_128.png"), _width=64), _href="http://www.web2py.com")}}
+
                 </div>
                 {{end}}
             </div>
