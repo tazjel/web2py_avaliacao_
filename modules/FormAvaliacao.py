@@ -421,7 +421,7 @@ class FormAvaliacao(object):
     def formAnexo2(self):
         return FORM(
             FIELDSET(
-                LEGEND('2. Condições de trabalho oferedicas pela instituição'),
+                LEGEND('2. Condições de trabalho oferecidas pela instituição'),
                 LABEL('Iluminação: ', _for='p1'),
                 TAG[''](self.printAnexo2RadioOptions('FATOR_ILUMINACAO')), BR(),
                 LABEL('Temperatura: ', _for='p2'),
