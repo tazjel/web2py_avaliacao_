@@ -5,7 +5,7 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.logo = A(B('DTIC/UNIRIO'),
+response.logo = A('DTIC/UNIRIO',
                   _class="brand",_href="http://dtic.unirio.br")
 response.title = request.application.replace('_',' ').title()
 response.subtitle = ''
