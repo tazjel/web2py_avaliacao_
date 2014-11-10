@@ -32,6 +32,15 @@ response.menu = [
     # ("Anexo 2", False, URL('anexo2', 'index'))
 ]
 
+if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):
+    response.menu += [
+        ("Relatórios", False, False,[
+            ("Buscar avaliação", False, URL('adm', 'avaliacaoes')),
+            ("Avaliações não finalizadas", False, URL('adm', 'naoFinalizadas')),
+            ("??????", False, URL('adm', 'avaliacaoes'))
+        ])
+    ]
+
 DEVELOPMENT_MENU = False
 
 #########################################################################
