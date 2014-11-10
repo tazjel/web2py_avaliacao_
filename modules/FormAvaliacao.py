@@ -34,7 +34,7 @@ class FormAvaliacao(object):
                 BR(),
                 LABEL('E-mail: ', _for='EMAIL_SERVIDOR'),
                 INPUT(_name='EMAIL_SERVIDOR', _type='text',
-                      _value=self.servidor['EMAIL_SERVIDOR'].encode('utf8'), _readonly='true'),
+                      _value=self.servidor['EMAIL_SERVIDOR'].encode('utf8') if self.servidor['EMAIL_SERVIDOR'] else "Não possui e-mail cadastrado.", _readonly='true'),
                 BR(),
                 _class='dadosServidor'),
             FIELDSET(
@@ -53,7 +53,7 @@ class FormAvaliacao(object):
                 BR(),
                 LABEL('E-mail: ', _for='EMAIL_CHEFIA_TITULAR'),
                 INPUT(_name='EMAIL_CHEFIA_TITULAR', _type='text',
-                      _value=self.servidor['EMAIL_CHEFIA_TITULAR'].encode('utf8'), _readonly='true'),
+                      _value=self.servidor['EMAIL_CHEFIA_TITULAR'].encode('utf8') if self.servidor['EMAIL_CHEFIA_TITULAR'] else "Não possui e-mail cadastrado.", _readonly='true'),
                 BR(),
                 _class='dadosServidor'), BR(),
 
