@@ -391,7 +391,7 @@ class FormAvaliacao(object):
                     , _class='centered important'
                 )
             ),
-            INPUT(_value='Enviar', _type='submit', _disabled=Avaliacao.isCiente())
+            INPUT(_value='Enviar', _type='submit', _disabled=Avaliacao.isFinalizada())
         )
 
     def printAnexo2RadioOptions(self, column):

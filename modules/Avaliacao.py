@@ -79,6 +79,18 @@ class Avaliacao(object):
                 return True
 
     @staticmethod
+    def isFinalizada():
+        """
+        TODO documentar esta caceta
+        :return:
+        """
+        if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
+            if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
+                return True
+        else:
+            raise Exception(current.session)
+
+    @staticmethod
     def anosDeExercicio():
         return current.db().select(current.db.PERIODOS_ABERTOS_AVAL.ANO_EXERCICIO)
 
