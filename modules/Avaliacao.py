@@ -185,7 +185,7 @@ class Avaliacao(object):
 
 
     def salvarModificacoes(self, vars):
-        if not self.isCiente():
+        if not self.isFinalizada():
             filteredDict = self._filterFields(vars)
 
             current.db.AVAL_ANEXO_1.update_or_insert((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
