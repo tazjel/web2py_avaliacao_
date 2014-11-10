@@ -402,20 +402,22 @@ class FormAvaliacao(object):
         :param column: uma coluna do banco AVAL_ANEXO_1
         :return: A list of form components
         """
-        options = []
+        content = []
         checkedValue = self.contentForColumn(column)
         isReadonly = self.columnShouldBeReadonlyForCurrentSession(column)
-
-        options.append(
-            INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
-                  value=checkedValue))
-        options.append('Adequada')
-        options.append(
-            INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
-                  value=checkedValue))
-        options.append('Inadequada')
-
-        return options
+        fatores = {"s": "Adequada", "n": "Inadequada"}
+        if not Avaliacao.isCiente():
+            content.append(
+                INPUT(_name=column, _type='radio', _value='s', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
+                      value=checkedValue))
+            content.append('Adequada')
+            content.append(
+                INPUT(_name=column, _type='radio', _value='n', requires=IS_NOT_EMPTY(), _disabled=isReadonly,
+                      value=checkedValue))
+            content.append('Inadequada')
+        else:
+            content.append(fatores[checkedValue])
+        return content
 
     @property
     def formAnexo2(self):
