@@ -1,0 +1,6 @@
+{{extend "layout.html"}}
+<p>Os gráficos aqui apresentados são atualizados com intervalo de 1 hora.</p>
+{{for title, chart in charts.iteritems():}}
+    {{=H1(title)}}
+    {{=chart}}
+{{pass}}

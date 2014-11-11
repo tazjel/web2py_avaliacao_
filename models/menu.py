@@ -24,12 +24,8 @@ response.google_analytics_id = None
 
 response.menu = [
     ("Início", False, URL('default', 'index'), []),
-    # ("Anexo 1", False, URL('anexo1', 'index'),[
-    #     ("Início", False, URL('anexo1', 'index')),
-    #     ("Página 2", False, URL('anexo1', 'pagina2')),
-    #     ("Página 3", False, URL('anexo1', 'pagina3'))
-    # ]),
-    # ("Anexo 2", False, URL('anexo2', 'index'))
+    ("Estatísticas", False, URL('estatisticas', 'index'))
+
 ]
 
 if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):

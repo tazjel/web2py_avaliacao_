@@ -1,7 +1,7 @@
 
 from gluon.tools import Crud
 
-
+@auth.requires(auth.has_membership('PROGEPE') or auth.has_membership('DTIC'))
 def avaliacaoes():
     busca = SQLFORM.grid(
         db.AVAL_ANEXO_1,
@@ -19,7 +19,7 @@ def avaliacaoes():
     )
     return dict(busca=busca)
 
-
+@auth.requires(auth.has_membership('PROGEPE') or auth.has_membership('DTIC'))
 def naoFinalizadas():
     from gluon.tools import Crud
 
@@ -35,47 +35,3 @@ def naoFinalizadas():
                               ]
     )
     return dict(avaliacoes=avaliacaoes)
-
-
-def estatisticas():
-    import pygal
-    from pygal.style import CleanStyle
-    from statistics import mean, median, mode
-
-    fields = ["NOTA_ASSIDUIDADE_CHEFIA", "NOTA_COMPROMISSO_CHEFIA", "NOTA_CONHECIMENTO_CHEFIA",
-              "NOTA_DESENVOLVIMENTO_CHEFIA", "NOTA_INICIATIVA_CHEFIA", "NOTA_ORGANIZACAO_CHEFIA",
-              "NOTA_PRODUTIVIDADE_CHEFIA", "NOTA_RESPONSABILIDADE_CHEFIA", "NOTA_ASSIDUIDADE",
-              "NOTA_COMPROMISSO", "NOTA_CONHECIMENTO", "NOTA_DESENVOLVIMENTO", "NOTA_INICIATIVA",
-              "NOTA_ORGANIZACAO", "NOTA_PRODUTIVIDADE", "NOTA_RESPONSABILIDADE", "NOTA_RELACIONAMENTO"]
-
-    avals = db(db.AVAL_ANEXO_1.CIENTE_SERVIDOR == 'T').select(
-        *[db.AVAL_ANEXO_1[x] for x in fields]
-    )
-
-    notas = dict.fromkeys(fields, [])
-    for aval in avals:
-        for nota in aval:
-            notas[nota].append(aval[nota])
-
-    means = [mean(nota) for k, nota in notas.iteritems()]
-    medians = [median(nota) for k, nota in notas.iteritems()]
-    modes = [mode(nota) for k, nota in notas.iteritems()]
-
-    response.headers['Content-Type'] = 'image/svg+xml'
-
-    bar_chart = pygal.Bar(style=CleanStyle)  # Then create a bar graph object
-    bar_chart.x_labels = fields
-    bar_chart.x_label_rotation = 90
-    bar_chart.add('Media', means)
-    bar_chart.add('Mediana', medians)
-    bar_chart.add('Moda', modes)
-    return bar_chart.render()
-
-
-    # box_plot = pygal.Box(
-    #     range=(0,10),
-    #     legend_font_size=8
-    # )
-    # box_plot.title = 'Desempenho dos servidores'
-    # [box_plot.add(k,v) for k, v in notas.iteritems()]
-    # return box_plot.render()
