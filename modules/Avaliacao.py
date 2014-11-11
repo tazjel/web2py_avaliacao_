@@ -31,7 +31,7 @@ class Avaliacao(object):
                         return subordinado
 
         elif str(siapeServidor) == str(current.session.dadosServidor["SIAPE_SERVIDOR"]):
-                return current.session.dadosServidor
+            return current.session.dadosServidor
 
         raise Exception("Você não tem permissão de acesso para a avaliaçao de " + str(siapeServidor))
 
@@ -103,9 +103,9 @@ class Avaliacao(object):
         :return: int correspondente aos pontos por fator
         """
         if current.session.avaliacao:
-            if 'NOTA_'+topico in current.session.avaliacao:
-                return (int(current.session.avaliacao['NOTA_' + topico]) + int(
-                    current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) ) / 2
+            if 'NOTA_' + topico in current.session.avaliacao:
+                return round(float(current.session.avaliacao['NOTA_' + topico] +
+                        current.session.avaliacao['NOTA_' + topico + '_CHEFIA']) / 2, 1)
 
     @staticmethod
     def notaFinal():
@@ -113,12 +113,13 @@ class Avaliacao(object):
         for k, v in current.session.avaliacao.iteritems():
             if Avaliacao.columnIsNota(k) and v:
                 somatorioNotas += v
-        return int(somatorioNotas / 18)
+        return round(float(somatorioNotas) / 18, 1)
 
     @property
     def dados(self):
         avaliacao = current.db((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
-                               & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR'])).select().first()
+                               & (
+            current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR'])).select().first()
         if avaliacao:
             return avaliacao
         else:
@@ -189,7 +190,8 @@ class Avaliacao(object):
             filteredDict = self._filterFields(vars)
 
             current.db.AVAL_ANEXO_1.update_or_insert((current.db.AVAL_ANEXO_1.ANO_EXERCICIO == self.ano)
-                                   & (current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR']), **filteredDict)
+                                                     & (
+                current.db.AVAL_ANEXO_1.SIAPE_SERVIDOR == self.servidorAvaliado['SIAPE_SERVIDOR']), **filteredDict)
             # atualiza session
             current.session.avaliacao.update(filteredDict)
 
