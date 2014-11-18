@@ -4,6 +4,8 @@ from gluon import current
 
 db.define_table('PERIODOS_ABERTOS_AVAL',
                 Field('ANO_EXERCICIO', 'integer'),
+                Field('DT_INICIO', 'date'),
+                Field('DT_FIM', 'date'),
                 primarykey=['ANO_EXERCICIO']
 )
 

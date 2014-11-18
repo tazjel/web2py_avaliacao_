@@ -24,8 +24,8 @@ response.google_analytics_id = None
 
 response.menu = [
     ("Início", False, URL('default', 'index'), []),
-    ("Estatísticas", False, URL('estatisticas', 'index'))
-
+    ("Estatísticas", False, URL('estatisticas', 'index')),
+    ("Orientações", False, URL('', ''), [])
 ]
 
 if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):
@@ -34,6 +34,10 @@ if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):
             ("Buscar avaliação", False, URL('adm', 'avaliacaoes')),
             ("Avaliações não finalizadas", False, URL('adm', 'naoFinalizadas')),
             ("??????", False, URL('adm', 'avaliacaoes'))
+        ]),
+        ("Administração", False, False, [
+            ("Alterar estado de Avaliação", False, False),
+            ("Mudanças de chefia imediata", False, False)
         ])
     ]
 

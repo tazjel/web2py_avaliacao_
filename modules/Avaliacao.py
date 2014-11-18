@@ -45,7 +45,7 @@ class Avaliacao(object):
         """
         tipos = {"autoavaliacao": "Autoavaliação"}
         if current.session.subordinados:
-            tipos.update({"subordinados": "Avaliar subordinados"})
+            tipos.update({"subordinados": "Avaliar equipe"})
 
         return tipos
 
@@ -183,7 +183,6 @@ class Avaliacao(object):
                 filteredDict.update({field: vars[field]})
 
         return filteredDict
-
 
     def salvarModificacoes(self, vars):
         if not self.isFinalizada():
