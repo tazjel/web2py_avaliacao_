@@ -25,7 +25,7 @@ response.google_analytics_id = None
 response.menu = [
     ("Início", False, URL('default', 'index'), []),
     ("Estatísticas", False, URL('estatisticas', 'index')),
-    ("Orientações", False, URL('', ''), [])
+    ("Orientações", False, URL('default', 'mensagem'), [])
 ]
 
 if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):

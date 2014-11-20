@@ -65,12 +65,14 @@ class FormAvaliacao(object):
     def resumoTable(self):
         if not self.tipo == 'subordinados':
             return TABLE(
-                TBODY(
+                THEAD(
                     TR(
                         TD('Fatores'),
                         TD('Pontos por Fator**')
                         , _class='tableHeader'
-                    ),
+                    )
+                ),
+                TBODY(
                     TR(
                         TD('1 - Assiduidade/Pontualidade', _class='cellTitle'),
                         TD(Avaliacao.pontosPorFator('ASSIDUIDADE'))

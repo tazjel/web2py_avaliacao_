@@ -39,6 +39,9 @@ def index():
 
     return dict(form=form)
 
+def mensagem():
+    return dict()
+
 def user():
     """
     exposes:

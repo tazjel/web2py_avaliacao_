@@ -97,5 +97,10 @@ auth.settings.actions_disabled = ['register',
                                   'profile',
                                   'change_password',
                                   'request_reset_password']
+
 auth.settings.remember_me_form = False
+# login_next Não está funcionando e segundo a documentação, deveria funcionar
+auth.settings.login_next = URL('default', 'mensagem')
+# Faço o redirect para URL acima, no método abaixo
 auth.settings.login_onaccept = Servidor().getDadosToSession()
+

@@ -238,3 +238,13 @@ img.desaturate:hover{
     -moz-filter: grayscale(0%);
     filter: grayscale(0%);
 }
+
+#informativo_progep{
+    width:80%;
+    margin: 0 auto;
+
+}
+
+span.highlight {
+    font-size: 16pt;
+}

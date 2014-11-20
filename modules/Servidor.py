@@ -1,6 +1,6 @@
 # coding=utf-8
 from SIEServidores import SIEChefiasImediatas, SIESubordinados
-from gluon import current
+from gluon import current, redirect, URL
 
 
 class Servidor(object):
@@ -44,3 +44,4 @@ class Servidor(object):
                 # Se o servidor possuir subordinados, armazenamos os mesmos, ordenados ASC por NOME_SUBORDINADO
                 from operator import itemgetter
                 current.session.subordinados = sorted(subordinados, key=itemgetter('NOME_SERVIDOR'))
+            redirect(URL('default', 'mensagem'))
