@@ -8,7 +8,7 @@ class Subordinados(object):
     def __init__(self):
         self.subordinados = current.session.subordinados
 
-    def removerSubordinados(self, siapes, observacao=None):
+    def removerSubordinados(self, siapes, tipo, observacao=None):
         """
 
         :type subordinados: list
@@ -22,13 +22,17 @@ class Subordinados(object):
                         "SIAPE_SERVIDOR": subordinado["SIAPE_SERVIDOR"],
                         "SIAPE_CHEFIA_TITULAR": subordinado["SIAPE_CHEFIA_TITULAR"],
                         "UNIDADE_EXERCICIO_SERVIDOR": subordinado["SIAPE_CHEFIA_TITULAR"],
-                        "OBSERVACAO": observacao
+                        "OBSERVACAO": observacao,
+                        "TIPO": tipo
                     }
                     current.db.SUBORDINADOS_EXCLUIR.insert(**params)
                     current.db.commit()
                     self.subordinados.remove(subordinado)
                     try:
-                        email = MailSubordinados(subordinado, observacao)
+                        email = MailSubordinados(
+                            subordinado,
+                            current.db(current.db.TIPOS_EXCLUSAO.id == tipo).select(current.db.TIPOS_EXCLUSAO.TIPO).first().TIPO,
+                            observacao)
                         email.sendSubordinadoRemocaoMail()
                     except Exception:
                         current.session.flash = "Um erro ocorreu durante o envio de e-mail de confirmação de remoção de subordinado."

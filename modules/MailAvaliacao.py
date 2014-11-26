@@ -98,7 +98,7 @@ class MailAvaliacao(object):
         }
 
 class MailSubordinados(object):
-    def __init__(self, subordinado, observacao=""):
+    def __init__(self, subordinado, tipo, observacao=""):
         """
 
 
@@ -108,6 +108,7 @@ class MailSubordinados(object):
         self.reply_to = "naoresponder.avaliacao@unirio.br"
         self.subject = "[DTIC/PROGEP] Avaliação Funcional e Institucional - Movimentação"
         self.subordinado = subordinado
+        self.tipo = tipo
         self.observacao = observacao
         self.setorCompetenteMail = "progepe.spmf@unirio.br"
         self.footer = "\r\n\r\n **** E-MAIL AUTOMÁTICO - NÃO RESPONDA ****"
@@ -134,7 +135,7 @@ class MailSubordinados(object):
             "message": self.subordinado['CHEFIA_TITULAR'].encode('utf-8')
                        + ", o servidor " + self.subordinado["NOME_SERVIDOR"].encode('utf-8')
                        + ' foi removido da sua lista de subordinados pelo motivo: ' + self._formatedObservacao()
-                       + ' e foi encaminhado para devidas providências de movimentação.'
+                       + ' alegando "' + self.tipo + '" e foi encaminhado para devidas providências de movimentação.'
                        + self.footer
         }
 
@@ -147,8 +148,8 @@ class MailSubordinados(object):
             "message": self.subordinado['CHEFIA_TITULAR'].encode('utf-8')
                        + ", que exerce cargo de CHEFIA em " + self.subordinado["UNIDADE_EXERCICIO_CHEFIA"].encode('utf-8')
                        + ', removeu ' + self.subordinado['NOME_SERVIDOR'].encode('utf-8') + ', portador do SIAPE '
-                       + str(self.subordinado['SIAPE_SERVIDOR']) + ' da sua lista de subordinados pelo motivo: '
-                       + self._formatedObservacao() + self.footer
+                       + str(self.subordinado['SIAPE_SERVIDOR']) + ' da sua lista de subordinados pelo motivo: "'
+                       + self.tipo + '" com a observação: ' + self._formatedObservacao() + self.footer
         }
 
 

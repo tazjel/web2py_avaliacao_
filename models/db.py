@@ -55,12 +55,20 @@ db.define_table('AVAL_ANEXO_1',
                 Field('INFO_COMPLEMENTARES', 'string', length=4096)
 )
 
+db.define_table("TIPOS_EXCLUSAO",
+    Field("TIPO", "string"),
+    Field("DESCRICAO", "text")
+)
+
 db.define_table("SUBORDINADOS_EXCLUIR",
     Field('SIAPE_SERVIDOR', 'integer'),
     Field('SIAPE_CHEFIA_TITULAR', 'integer'),
     Field('OBSERVACAO', 'text'),
-    Field('UNIDADE_EXERCICIO_SERVIDOR', 'string')
+    Field('UNIDADE_EXERCICIO_SERVIDOR', 'string'),
+    Field('TIPO', db.TIPOS_EXCLUSAO)
 )
+
+
 
 current.db = db
 

@@ -1,7 +1,9 @@
 # coding=utf-8
+from time import strftime
 from gluon import current
 from datetime import date
 import math
+from unirio.api import UNIRIOAPIRequest
 
 
 class Avaliacao(object):
@@ -87,8 +89,6 @@ class Avaliacao(object):
         if 'CIENTE_CHEFIA' in current.session.avaliacao and current.session.avaliacao['CIENTE_CHEFIA'] == 'T':
             if 'CIENTE_SERVIDOR' in current.session.avaliacao and current.session.avaliacao['CIENTE_SERVIDOR'] == 'T':
                 return True
-        else:
-            raise Exception(current.session)
 
     @staticmethod
     def anosDeExercicio():
@@ -183,6 +183,32 @@ class Avaliacao(object):
                 filteredDict.update({field: vars[field]})
 
         return filteredDict
+
+
+    def salvarResultadoFinal(self):
+        """
+
+        :rtype : None
+        """
+        api = UNIRIOAPIRequest(current.kAPIKey)
+        path = "OCOR_FUNCIONAIS_RH"
+        params = {
+            "ID_COD_FUNCIONAL": 847,                # Resultado de Avaliação de Desempenho
+            "DT_INICIO": date.today(),
+            "ID_DOCUMENTO": None,
+            "LOCAL_ORIGEM_TAB": 233,
+            "LOCAL_DESTINO_TAB": 233,
+            "QT_REFERENCIA": self.notaFinal(),
+            "ANO_REF": self.ano,
+            "DT_ALTERACAO": date.today(),
+            "HR_ALTERACAO": strftime("%H:%M:%S"),
+            "ENDERECO_FISICO": current.request.env.server_host
+        }
+        try:
+            api.performPOSTRequest(path, params)
+        except Exception as e:
+            print e.message
+
 
     def salvarModificacoes(self, vars):
         if not self.isFinalizada():

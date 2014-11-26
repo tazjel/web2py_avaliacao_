@@ -24,13 +24,19 @@ def index():
         BR(),
         TEXTAREA(_placeholder="Opcional: Insira uma justificativa que ajude a interpretar a fonte do problema.", _name="OBSERVACAO"),
         P("Clique no botão abaixo para remover os seridores da lista."),
-        INPUT(_type="submit", _value="Não se encontra em exercício na unidade")
+        INPUT(_type="submit", _value=db(db.TIPOS_EXCLUSAO.id == 1).select(db.TIPOS_EXCLUSAO.TIPO).first().TIPO, _name="submit1"),
+        INPUT(_type="submit", _value=db(db.TIPOS_EXCLUSAO.id == 2).select(db.TIPOS_EXCLUSAO.TIPO).first().TIPO, _name="submit2")
     )
 
     if form.process().accepted:
         subordinados = Subordinados()
         siapes = form.vars.subordinados if isinstance(form.vars.subordinados, list) else [form.vars.subordinados]
-        subordinados.removerSubordinados(siapes, form.vars.OBSERVACAO)
+        # TODO: 1 if bla else 2... GAMBIARRA DO CARALHO ! Remover esta merda e os dois botões acima.
+        subordinados.removerSubordinados(
+            siapes,
+            1 if form.vars.submit1 else 2,
+            form.vars.OBSERVACAO
+        )
         redirect(URL('subordinados', 'index'))
 
         session.flash = "Servidores removidos com sucesso."

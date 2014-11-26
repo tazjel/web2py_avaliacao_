@@ -81,6 +81,8 @@ def pagina3():
         elif session.avaliacaoTipo == 'autoavaliacao':
             redirect(URL('default', 'index'))
 
-    return dict(form=form,
-                resumo=formAvaliacao.resumoTable if session.avaliacaoTipo == 'autoavaliacao' else "",
-                data=date.today())
+    return dict(
+        form=form,
+        resumo=formAvaliacao.resumoTable if session.avaliacaoTipo == 'autoavaliacao' else "",
+        data=date.today()
+    )
