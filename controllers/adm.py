@@ -1,11 +1,3 @@
-from gluon import current
-
-db = DAL('postgres://postgres:devdtic2@sistemas.unirio.br/avaliacao', migrate=False)
-
-kAPIKey = "d694ad743396691552a83008dda6cbf45b28279b23335efbed19fb9a35283035770c8477bb8e812d19b6beac001b2eeb"
-current.kAPIKey = kAPIKey
-
-emailPass = 'DuV-zF8-Jek-vqC'
 from gluon.tools import Crud
 
 @auth.requires(auth.has_membership('PROGEPE') or auth.has_membership('DTIC'))
