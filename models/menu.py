@@ -35,9 +35,10 @@ if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):
             ("Avaliações não finalizadas", False, URL('adm', 'naoFinalizadas')),
             ("??????", False, URL('adm', 'avaliacaoes'))
         ]),
+
         ("Administração", False, False, [
             ("Alterar estado de Avaliação", False, False),
-            ("Mudanças de chefia imediata", False, False)
+            ("Mudanças de chefia imediata", False, URL('adm', 'gerenciarLista'))
         ])
     ]
 
