@@ -1,22 +1,15 @@
+
 from gluon.tools import Crud
+from tables import *
 
 @auth.requires(auth.has_membership('PROGEPE') or auth.has_membership('DTIC'))
-def avaliacaoes():
-    busca = SQLFORM.grid(
-        db.AVAL_ANEXO_1,
-        deletable=False,
-        editable=False,
-        create=False,
-        fields=[
-            db.AVAL_ANEXO_1.id,
-            db.AVAL_ANEXO_1.ANO_EXERCICIO,
-            db.AVAL_ANEXO_1.SIAPE_SERVIDOR,
-            db.AVAL_ANEXO_1.SIAPE_CHEFIA
-        ],
-        orderby=db.AVAL_ANEXO_1.DATA_DOCUMENTO,
-        paginate=50
+def avaliacoes():
+    avaliacoes = db(db.AVAL_ANEXO_1).select(orderby=db.AVAL_ANEXO_1.ANO_EXERCICIO|db.AVAL_ANEXO_1.SIAPE_CHEFIA)
+    table = TableAvaliacoesRealizadas(avaliacoes)
+    return dict(
+        avaliacoes=avaliacoes,
+        table=table.printTable()
     )
-    return dict(busca=busca)
 
 @auth.requires(auth.has_membership('PROGEPE') or auth.has_membership('DTIC'))
 def naoFinalizadas():
@@ -34,7 +27,6 @@ def naoFinalizadas():
                               ]
     )
     return dict(avaliacoes=avaliacaoes)
-
 @auth.requires(auth.has_membership('PROGEPE') or auth.has_membership('DTIC'))
 def gerenciarLista():
     query = db.SUBORDINADOS_EXCLUIR.on(db.SUBORDINADOS_EXCLUIR.TIPO==db.TIPOS_EXCLUSAO.id)

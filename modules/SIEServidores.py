@@ -2,6 +2,7 @@
 from gluon import current
 from unirio.api.apirequest import UNIRIOAPIRequest
 
+__all__ = ["SIEChefiasImediatas","SIESubordinados","SIEServidorNome",]
 
 class SIEChefiasImediatas(object):
     chefiaNotFoundErrorMessage = "Chefia não encontrada"
@@ -91,3 +92,17 @@ class SIESubordinados(SIEChefiasImediatas):
         except Exception:
             pass
 
+class SIEServidorNome(object):
+    def __init__(self):
+        super(SIEServidorNome, self).__init__()
+        self.path = "V_SERVIDORES"
+        self.apiRequest = UNIRIOAPIRequest(current.kAPIKey)
+        self.cacheTime = 172800# dois dias
+
+    def getServidorBySiape(self, siape):
+        params = {
+            "MATR_EXTERNA": siape,
+            "LMIN": 0,
+            "LMAX": 1
+        }
+        return self.apiRequest.performGETRequest(self.path, params, cached=self.cacheTime).content[0]

@@ -31,9 +31,9 @@ response.menu = [
 if auth.has_membership('PROGEPE') or auth.has_membership('DTIC'):
     response.menu += [
         ("Relatórios", False, False,[
-            ("Buscar avaliação", False, URL('adm', 'avaliacaoes')),
+            ("Buscar avaliação", False, URL('adm', 'avaliacoes')),
             ("Avaliações não finalizadas", False, URL('adm', 'naoFinalizadas')),
-            ("??????", False, URL('adm', 'avaliacaoes'))
+            ("??????", False, URL('adm', 'avaliacoes'))
         ]),
 
         ("Administração", False, False, [
