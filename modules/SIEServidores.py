@@ -47,6 +47,7 @@ class SIEChefiasImediatas(object):
                 }
                 servidor = self.apiRequest.performGETRequest(self.path, params).content[0]
                 dadosServidorGambiarra = {
+                    "NOME_SERVIDOR": servidor["NOME_SERVIDOR"],
                     "CPF_SERVIDOR": servidor["CPF_CHEFIA"],
                     "SIAPE_SERVIDOR": servidor["SIAPE_CHEFIA_TITULAR"],
                     "EMAIL_SERVIDOR": servidor["EMAIL_CHEFIA_TITULAR"],
