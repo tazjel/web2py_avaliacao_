@@ -37,7 +37,8 @@ class Servidor(object):
             current.session.dadosServidor = self.__dadosChefiaImediata
 
             if not current.session.dadosServidor:
-                raise Exception("Os dados da sua chefia não foram encontrados. Entre em contato com a PROGEP.")
+                current.session.flash = "Os dados da sua chefia não foram encontrados. Entre em contato com a PROGEP."
+                current.auth.logout()
 
             subordinados = self.__subordinados
             if subordinados:
