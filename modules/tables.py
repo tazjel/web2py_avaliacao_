@@ -46,6 +46,8 @@ class TableAvaliacoesRealizadas(TableAvaliacoes):
             "Lotação Exercício",
             "Nome Chefia",
             "SIAPE Chefia",
+            "Ciente Chefia",
+            "Ciente Servidor",
             "Info Complementar Servidor",
             "Sugestões Servidor",
             "Info Complementar Chefia",
@@ -58,7 +60,8 @@ class TableAvaliacoesRealizadas(TableAvaliacoes):
             servidor = self.servidor(a)
             chefia = self.chefia(a)
             return TR( a['ANO_EXERCICIO'], servidor['NOME_FUNCIONARIO'], a['SIAPE_SERVIDOR'],
-                      chefia['DESC_LOT_EXERCICIO'], chefia['NOME_FUNCIONARIO'], a['SIAPE_CHEFIA'] , a['INFO_COMPLEMENTAR_SERVIDOR'],
+                      chefia['DESC_LOT_EXERCICIO'], chefia['NOME_FUNCIONARIO'], a['SIAPE_CHEFIA'] , a['CIENTE_CHEFIA'],
+                      a['CIENTE_SERVIDOR'],a['INFO_COMPLEMENTAR_SERVIDOR'],
             a['SUGESTOES_SERVIDOR'],a['SUGESTOES_CHEFIA'], a['INFO_COMPLEMENTAR_CHEFIA'])
 
         return TABLE(
